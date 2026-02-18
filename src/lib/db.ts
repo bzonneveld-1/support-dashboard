@@ -20,21 +20,25 @@ export interface MetricsRow {
   created_at: string;
 }
 
+// Format a local Date as YYYY-MM-DD without timezone conversion
+function fmtDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
 export function getWeekBounds(week: string): { startDate: string; endDate: string } {
   if (week === 'current') {
     const now = new Date();
     const day = now.getDay();
     const diff = day === 0 ? -6 : 1 - day; // Monday = start
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 7);
+    const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
+    const nextMonday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 7);
 
     return {
-      startDate: monday.toISOString().split('T')[0],
-      endDate: sunday.toISOString().split('T')[0],
+      startDate: fmtDate(monday),
+      endDate: fmtDate(nextMonday),
     };
   }
 
@@ -50,14 +54,11 @@ export function getWeekBounds(week: string): { startDate: string; endDate: strin
   // ISO 8601: Week 1 contains Jan 4th
   const jan4 = new Date(year, 0, 4);
   const jan4Day = jan4.getDay() || 7;
-  const monday = new Date(jan4);
-  monday.setDate(jan4.getDate() - jan4Day + 1 + (weekNum - 1) * 7);
-
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 7);
+  const monday = new Date(year, 0, 4 - jan4Day + 1 + (weekNum - 1) * 7);
+  const nextMonday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 7);
 
   return {
-    startDate: monday.toISOString().split('T')[0],
-    endDate: sunday.toISOString().split('T')[0],
+    startDate: fmtDate(monday),
+    endDate: fmtDate(nextMonday),
   };
 }
