@@ -1,25 +1,9 @@
-import { sql } from '@vercel/postgres';
+import { createClient } from '@supabase/supabase-js';
 
-export async function initDb() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS daily_metrics (
-      id                     SERIAL PRIMARY KEY,
-      metric_date            DATE NOT NULL,
-      time_slot              VARCHAR(5) NOT NULL,
-      unassigned_tickets     INTEGER,
-      all_open_tickets       INTEGER,
-      whatsapp_all_open      INTEGER,
-      whatsapp_waiting_on_us INTEGER,
-      waiting_on_us          INTEGER,
-      total_calls            INTEGER,
-      total_chatbot_chats    INTEGER,
-      collected_at           TIMESTAMP DEFAULT NOW(),
-      created_at             TIMESTAMP DEFAULT NOW(),
-      UNIQUE(metric_date, time_slot)
-    )
-  `;
-  await sql`CREATE INDEX IF NOT EXISTS idx_daily_metrics_date ON daily_metrics(metric_date)`;
-}
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export interface MetricsRow {
   id: number;
@@ -65,7 +49,7 @@ export function getWeekBounds(week: string): { startDate: string; endDate: strin
 
   // ISO 8601: Week 1 contains Jan 4th
   const jan4 = new Date(year, 0, 4);
-  const jan4Day = jan4.getDay() || 7; // Convert Sunday=0 to 7
+  const jan4Day = jan4.getDay() || 7;
   const monday = new Date(jan4);
   monday.setDate(jan4.getDate() - jan4Day + 1 + (weekNum - 1) * 7);
 

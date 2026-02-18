@@ -1,6 +1,5 @@
-import { sql } from '@vercel/postgres';
 import { z } from 'zod';
-import { getWeekBounds } from '@/lib/db';
+import { supabase, getWeekBounds } from '@/lib/db';
 
 const MetricsSchema = z.object({
   metric_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -27,28 +26,27 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Validation failed', details: err }, { status: 400 });
   }
 
-  await sql`
-    INSERT INTO daily_metrics (
-      metric_date, time_slot,
-      unassigned_tickets, all_open_tickets,
-      whatsapp_all_open, whatsapp_waiting_on_us, waiting_on_us,
-      total_calls, total_chatbot_chats
-    ) VALUES (
-      ${body.metric_date}, ${body.time_slot},
-      ${body.unassigned_tickets}, ${body.all_open_tickets},
-      ${body.whatsapp_all_open}, ${body.whatsapp_waiting_on_us},
-      ${body.waiting_on_us}, ${body.total_calls}, ${body.total_chatbot_chats}
-    )
-    ON CONFLICT (metric_date, time_slot) DO UPDATE SET
-      unassigned_tickets = EXCLUDED.unassigned_tickets,
-      all_open_tickets = EXCLUDED.all_open_tickets,
-      whatsapp_all_open = EXCLUDED.whatsapp_all_open,
-      whatsapp_waiting_on_us = EXCLUDED.whatsapp_waiting_on_us,
-      waiting_on_us = EXCLUDED.waiting_on_us,
-      total_calls = EXCLUDED.total_calls,
-      total_chatbot_chats = EXCLUDED.total_chatbot_chats,
-      collected_at = NOW()
-  `;
+  const { error } = await supabase
+    .from('daily_metrics')
+    .upsert(
+      {
+        metric_date: body.metric_date,
+        time_slot: body.time_slot,
+        unassigned_tickets: body.unassigned_tickets,
+        all_open_tickets: body.all_open_tickets,
+        whatsapp_all_open: body.whatsapp_all_open,
+        whatsapp_waiting_on_us: body.whatsapp_waiting_on_us,
+        waiting_on_us: body.waiting_on_us,
+        total_calls: body.total_calls,
+        total_chatbot_chats: body.total_chatbot_chats,
+        collected_at: new Date().toISOString(),
+      },
+      { onConflict: 'metric_date,time_slot' }
+    );
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 
   return Response.json({ success: true });
 }
@@ -64,16 +62,21 @@ export async function GET(request: Request) {
     return Response.json({ error: (err as Error).message }, { status: 400 });
   }
 
-  const { rows } = await sql`
-    SELECT * FROM daily_metrics
-    WHERE metric_date >= ${bounds.startDate}::date
-      AND metric_date < ${bounds.endDate}::date
-    ORDER BY metric_date, time_slot
-  `;
+  const { data, error } = await supabase
+    .from('daily_metrics')
+    .select('*')
+    .gte('metric_date', bounds.startDate)
+    .lt('metric_date', bounds.endDate)
+    .order('metric_date')
+    .order('time_slot');
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 
   return Response.json({
     week: bounds.startDate,
     weekEnd: bounds.endDate,
-    metrics: rows,
+    metrics: data,
   });
 }
