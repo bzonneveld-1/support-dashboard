@@ -267,36 +267,39 @@ export default function Dashboard() {
       <div className="flex-1 overflow-auto min-h-0 bg-white rounded-2xl shadow-sm">
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
+            {/* Row 1: Group labels */}
             <tr className="bg-[#1D1D1F]">
-              <th rowSpan={2} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px]">
+              <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px] border-r border-white/10">
                 Dag
               </th>
-              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
-                Calls
+              <th colSpan={4} className="px-4 pt-2 pb-0 text-[10px] font-medium text-white/25 uppercase tracking-[0.15em] border-r border-white/10">
+                Dagtotalen
               </th>
-              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
-                Chatbot
+              <th colSpan={10} className="px-4 pt-2 pb-0 text-[10px] font-medium text-white/25 uppercase tracking-[0.15em]">
+                Ticket Snapshots
               </th>
-              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
-                Emails
-              </th>
-              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
-                WA Msgs
-              </th>
-              {TICKET_METRICS.map(m => (
+            </tr>
+            {/* Row 2: Column names */}
+            <tr className="bg-[#1D1D1F]">
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Calls</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Chatbot</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Emails</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider border-r border-white/10">WA Msgs</th>
+              {TICKET_METRICS.map((m, i) => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className="px-3 py-1.5 text-[11px] font-medium text-white uppercase tracking-wider"
+                  className={`px-3 py-1 text-[11px] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}
                 >
                   {m.label}
                 </th>
               ))}
             </tr>
+            {/* Row 3: 08/18 sub-headers */}
             <tr className="bg-[#1D1D1F]">
-              {TICKET_METRICS.map(m => (
+              {TICKET_METRICS.map((m, i) => (
                 <Fragment key={m.key}>
-                  <th className="px-2 pb-1.5 text-[10px] font-normal text-white/40">
+                  <th className={`px-2 pb-1.5 text-[10px] font-normal text-white/40 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
                     08
                   </th>
                   <th className="px-2 pb-1.5 text-[10px] font-normal text-white/40">
@@ -307,7 +310,7 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {days.map(day => {
+            {days.map((day, dayIdx) => {
               // Only show calls/chatbot from evening row (daily totals from midnight run)
               const dailyCalls = day.evening?.total_calls ?? null;
               const dailyChat = day.evening?.total_chatbot_chats ?? null;
@@ -320,14 +323,14 @@ export default function Dashboard() {
                 <tr
                   key={day.date}
                   className={`
-                    border-b border-[#F2F2F7] transition-colors
-                    ${day.isToday ? 'bg-[#007AFF]/[0.03]' : ''}
+                    border-b border-[#E5E5EA] transition-colors
+                    ${day.isToday ? 'bg-[#007AFF]/[0.03]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
                     ${day.isFuture ? 'opacity-20' : ''}
                   `}
                   style={{ height: '20%' }}
                 >
                   {/* Day name */}
-                  <td className="px-5 py-2.5 text-left relative">
+                  <td className="px-5 py-2.5 text-left relative border-r border-[#E5E5EA]">
                     {day.isToday && (
                       <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-[#007AFF]" />
                     )}
@@ -382,7 +385,7 @@ export default function Dashboard() {
                   </td>
 
                   {/* WA Messages */}
-                  <td className="px-4 py-2.5 tabular-nums">
+                  <td className="px-4 py-2.5 tabular-nums border-r-2 border-[#E5E5EA]">
                     {day.isFuture ? (
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyWaMsgs != null ? (
@@ -406,7 +409,7 @@ export default function Dashboard() {
                     return (
                       <Fragment key={metric.key}>
                         {/* 08:00 */}
-                        <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3'}`}>
+                        <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3 border-l border-[#F2F2F7]'}`}>
                           {day.isFuture ? (
                             <span className="text-[#C7C7CC]">—</span>
                           ) : morningVal != null ? (
@@ -455,12 +458,12 @@ export default function Dashboard() {
 
           {/* Summary */}
           <tfoot>
-            <tr className="border-t border-[#E5E5EA]">
-              <td className="px-5 py-2.5 text-left" colSpan={5}>
+            <tr className="border-t-2 border-[#E5E5EA]">
+              <td className="px-5 py-2.5 text-left border-r border-[#E5E5EA]">
                 <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week totaal</span>
               </td>
-              <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
-                <div className="flex items-center justify-center gap-5">
+              <td className="py-2.5 text-[#8E8E93] text-xs border-r-2 border-[#E5E5EA]" colSpan={4}>
+                <div className="flex items-center justify-center gap-4">
                   <span>Calls <strong className="text-[#1C1C1E] text-sm font-medium">{totalCalls}</strong></span>
                   <span className="text-[#E5E5EA]">|</span>
                   <span>Chatbot <strong className="text-[#1C1C1E] text-sm font-medium">{totalChat}</strong></span>
@@ -468,7 +471,10 @@ export default function Dashboard() {
                   <span>Emails <strong className="text-[#1C1C1E] text-sm font-medium">{totalEmails}</strong></span>
                   <span className="text-[#E5E5EA]">|</span>
                   <span>WA Msgs <strong className="text-[#1C1C1E] text-sm font-medium">{totalWaMsgs}</strong></span>
-                  <span className="text-[#E5E5EA]">|</span>
+                </div>
+              </td>
+              <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
+                <div className="flex items-center justify-center">
                   <span>Gem. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
                 </div>
               </td>
