@@ -40,8 +40,8 @@ interface DayData {
 
 // ============ Constants ============
 
-const DAY_NAMES = ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag'];
-const MONTHS_NL = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const REFRESH_MS = 5 * 60 * 1000;
 
 type MetricKey = 'unassigned_tickets' | 'all_open_tickets' | 'whatsapp_all_open' | 'whatsapp_waiting_on_us' | 'waiting_on_us';
@@ -84,8 +84,8 @@ function formatDateRange(startDate: string, endDate: string): string {
 
   const startDay = start.getUTCDate();
   const endDay = end.getUTCDate();
-  const startMonth = MONTHS_NL[start.getUTCMonth()];
-  const endMonth = MONTHS_NL[end.getUTCMonth()];
+  const startMonth = MONTHS[start.getUTCMonth()];
+  const endMonth = MONTHS[end.getUTCMonth()];
   const year = end.getUTCFullYear();
 
   if (startMonth === endMonth) {
@@ -211,7 +211,7 @@ export default function Dashboard() {
   if (loading && !data) {
     return (
       <div className="h-screen flex items-center justify-center bg-[#F2F2F7]">
-        <div className="text-lg text-[#8E8E93] animate-pulse">Laden...</div>
+        <div className="text-lg text-[#8E8E93] animate-pulse">Loading...</div>
       </div>
     );
   }
@@ -250,7 +250,7 @@ export default function Dashboard() {
                 onClick={() => setWeekParam('current')}
                 className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
               >
-                Vandaag
+                Today
               </button>
             )}
             <button
@@ -270,12 +270,12 @@ export default function Dashboard() {
             {/* Row 1: Group labels */}
             <tr className="bg-[#1D1D1F]">
               <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px] border-r border-white/10">
-                Dag
+                Day
               </th>
-              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/50 uppercase tracking-[0.12em] border-r border-white/10">
-                Dagtotalen
+              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/70 uppercase tracking-[0.12em] border-r border-white/10">
+                Daily Totals
               </th>
-              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/50 uppercase tracking-[0.12em]">
+              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/70 uppercase tracking-[0.12em]">
                 Ticket Snapshots
               </th>
             </tr>
@@ -299,10 +299,10 @@ export default function Dashboard() {
             <tr className="bg-[#1D1D1F]">
               {TICKET_METRICS.map((m, i) => (
                 <Fragment key={m.key}>
-                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-white/50 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
+                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-white/60 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
                     08
                   </th>
-                  <th className="px-2 pb-1.5 text-[10px] font-medium text-white/50">
+                  <th className="px-2 pb-1.5 text-[10px] font-medium text-white/60">
                     18
                   </th>
                 </Fragment>
@@ -335,7 +335,7 @@ export default function Dashboard() {
                       {day.dayName}
                     </span>
                     {day.isToday && (
-                      <span className="ml-1.5 text-[9px] font-medium text-[#007AFF]/60 uppercase tracking-widest">vandaag</span>
+                      <span className="ml-1.5 text-[9px] font-medium text-[#007AFF]/60 uppercase tracking-widest">today</span>
                     )}
                   </td>
 
@@ -447,7 +447,7 @@ export default function Dashboard() {
           <tfoot>
             <tr className="border-t-2 border-[#E5E5EA]">
               <td className="px-5 py-2.5 text-left border-r border-[#E5E5EA]">
-                <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week totaal</span>
+                <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week Total</span>
               </td>
               <td className="py-2.5 text-[#8E8E93] text-xs border-r-2 border-[#E5E5EA]" colSpan={4}>
                 <div className="flex items-center justify-center gap-4">
@@ -462,7 +462,7 @@ export default function Dashboard() {
               </td>
               <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
                 <div className="flex items-center justify-center">
-                  <span>Gem. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
+                  <span>Avg. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
                 </div>
               </td>
             </tr>
@@ -481,10 +481,10 @@ function MissingCell({ backfilling, onBackfill }: { backfilling: boolean; onBack
       onClick={onBackfill}
       disabled={backfilling}
       className="group relative"
-      title="Klik om data op te halen"
+      title="Click to fetch data"
     >
       {backfilling ? (
-        <span className="text-[#FF9500] animate-pulse text-xs">ophalen...</span>
+        <span className="text-[#FF9500] animate-pulse text-xs">fetching...</span>
       ) : (
         <span className="text-[#C7C7CC]">—</span>
       )}

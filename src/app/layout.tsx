@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Support Dashboard",
-  description: "Digitaal whiteboard voor support metrics",
+  description: "Digital whiteboard for support metrics",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl">
+    <html lang="en">
       <body className="bg-[#F2F2F7] text-[#1C1C1E] antialiased">
         {children}
       </body>
