@@ -217,9 +217,9 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col p-4 lg:p-6 bg-gray-50/50">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0 border-b border-gray-100">
+      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0 bg-white rounded-t-xl border border-b-0 border-gray-200">
         <div className="flex items-center gap-3">
           <Image
             src="/bold-logo.png"
@@ -262,7 +262,7 @@ export default function Dashboard() {
       </div>
 
       {/* Table - fills remaining space */}
-      <div className="flex-1 overflow-auto min-h-0">
+      <div className="flex-1 overflow-auto min-h-0 bg-white rounded-b-xl border border-gray-200">
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             <tr className="bg-gray-900">
