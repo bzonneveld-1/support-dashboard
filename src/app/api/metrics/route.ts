@@ -1,18 +1,20 @@
 import { z } from 'zod';
 import { supabase, getWeekBounds } from '@/lib/db';
 
+const optionalMetric = z.union([z.number().int().min(0), z.null()]).optional();
+
 const MetricsSchema = z.object({
   metric_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time_slot: z.enum(['08:00', '18:00']),
-  unassigned_tickets: z.number().int().min(0).optional(),
-  all_open_tickets: z.number().int().min(0).optional(),
-  whatsapp_all_open: z.number().int().min(0).optional(),
-  whatsapp_waiting_on_us: z.number().int().min(0).optional(),
-  waiting_on_us: z.number().int().min(0).optional(),
-  total_calls: z.number().int().min(0).optional(),
-  total_chatbot_chats: z.number().int().min(0).optional(),
-  total_emails: z.number().int().min(0).optional(),
-  total_wa_messages: z.number().int().min(0).optional(),
+  unassigned_tickets: optionalMetric,
+  all_open_tickets: optionalMetric,
+  whatsapp_all_open: optionalMetric,
+  whatsapp_waiting_on_us: optionalMetric,
+  waiting_on_us: optionalMetric,
+  total_calls: optionalMetric,
+  total_chatbot_chats: optionalMetric,
+  total_emails: optionalMetric,
+  total_wa_messages: optionalMetric,
 });
 
 export async function POST(request: Request) {
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
 
   for (const field of optionalFields) {
     if (body[field] !== undefined) {
-      upsertData[field] = body[field];
+      upsertData[field] = body[field]; // includes explicit null
     }
   }
 
