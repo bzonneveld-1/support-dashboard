@@ -4,13 +4,13 @@ import { supabase, getWeekBounds } from '@/lib/db';
 const MetricsSchema = z.object({
   metric_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   time_slot: z.enum(['08:00', '18:00']),
-  unassigned_tickets: z.number().int().min(0),
-  all_open_tickets: z.number().int().min(0),
-  whatsapp_all_open: z.number().int().min(0),
-  whatsapp_waiting_on_us: z.number().int().min(0),
-  waiting_on_us: z.number().int().min(0),
-  total_calls: z.number().int().min(0),
-  total_chatbot_chats: z.number().int().min(0),
+  unassigned_tickets: z.number().int().min(0).optional(),
+  all_open_tickets: z.number().int().min(0).optional(),
+  whatsapp_all_open: z.number().int().min(0).optional(),
+  whatsapp_waiting_on_us: z.number().int().min(0).optional(),
+  waiting_on_us: z.number().int().min(0).optional(),
+  total_calls: z.number().int().min(0).optional(),
+  total_chatbot_chats: z.number().int().min(0).optional(),
 });
 
 export async function POST(request: Request) {
@@ -26,23 +26,26 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Validation failed', details: err }, { status: 400 });
   }
 
+  const upsertData: Record<string, unknown> = {
+    metric_date: body.metric_date,
+    time_slot: body.time_slot,
+    collected_at: new Date().toISOString(),
+  };
+
+  const optionalFields = [
+    'unassigned_tickets', 'all_open_tickets', 'whatsapp_all_open',
+    'whatsapp_waiting_on_us', 'waiting_on_us', 'total_calls', 'total_chatbot_chats',
+  ] as const;
+
+  for (const field of optionalFields) {
+    if (body[field] !== undefined) {
+      upsertData[field] = body[field];
+    }
+  }
+
   const { error } = await supabase
     .from('daily_metrics')
-    .upsert(
-      {
-        metric_date: body.metric_date,
-        time_slot: body.time_slot,
-        unassigned_tickets: body.unassigned_tickets,
-        all_open_tickets: body.all_open_tickets,
-        whatsapp_all_open: body.whatsapp_all_open,
-        whatsapp_waiting_on_us: body.whatsapp_waiting_on_us,
-        waiting_on_us: body.waiting_on_us,
-        total_calls: body.total_calls,
-        total_chatbot_chats: body.total_chatbot_chats,
-        collected_at: new Date().toISOString(),
-      },
-      { onConflict: 'metric_date,time_slot' }
-    );
+    .upsert(upsertData, { onConflict: 'metric_date,time_slot' });
 
   if (error) {
     return Response.json({ error: error.message }, { status: 500 });
