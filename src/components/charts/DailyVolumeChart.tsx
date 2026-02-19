@@ -44,7 +44,7 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
         <Legend />
         <Bar dataKey="Calls" stackId="a" fill="#1C1C1E" />
         <Bar dataKey="Chatbot" stackId="a" fill="#8E8E93" />
-        <Bar dataKey="Emails" stackId="a" fill="#FF9500" />
+        <Bar dataKey="Emails" stackId="a" fill="#FF6620" />
         <Bar dataKey="WA Msgs" stackId="a" fill="#34C759" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>

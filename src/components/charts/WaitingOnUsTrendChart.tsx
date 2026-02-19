@@ -44,7 +44,7 @@ export default function WaitingOnUsTrendChart({ metrics }: { metrics: MetricsRow
         />
         <Line
           type="monotone" dataKey="WA WoU" name="WA WoU"
-          stroke="#FF9500" dot={false} strokeWidth={2} connectNulls
+          stroke="#FF6620" dot={false} strokeWidth={2} connectNulls
         />
       </LineChart>
     </ResponsiveContainer>
