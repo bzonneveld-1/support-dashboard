@@ -154,23 +154,18 @@ export default function Dashboard() {
   const [weekParam, setWeekParam] = useState('current');
   const [data, setData] = useState<WeekData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [backfilling, setBackfilling] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchData = useCallback(async (showRefresh = false) => {
-    if (showRefresh) setRefreshing(true);
+  const fetchData = useCallback(async () => {
     try {
       const res = await fetch(`/api/metrics?week=${weekParam}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       setData(json);
-      setLastUpdate(new Date());
     } catch (err) {
       console.error('Failed to fetch metrics:', err);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   }, [weekParam]);
 
@@ -186,7 +181,7 @@ export default function Dashboard() {
     setBackfilling(key);
     try {
       await triggerBackfill(date, timeSlot);
-      setTimeout(() => fetchData(true), 8000);
+      setTimeout(() => fetchData(), 8000);
     } catch {
       console.error('Backfill failed');
     } finally {
@@ -222,43 +217,43 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="h-screen flex flex-col px-6 py-4 lg:px-10 lg:py-6">
+    <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <div className="flex items-center gap-5">
+      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0 border-b border-gray-100">
+        <div className="flex items-center gap-3">
           <Image
             src="/bold-logo.png"
             alt="Bold"
-            width={100}
-            height={39}
-            className="h-8 w-auto"
+            width={80}
+            height={31}
+            className="h-6 w-auto"
             priority
           />
-          <div className="h-6 w-px bg-gray-200" />
-          <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Support Dashboard</h1>
+          <div className="h-4 w-px bg-gray-200" />
+          <h1 className="text-sm font-semibold text-gray-900 tracking-tight">Support Dashboard</h1>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-400">
             Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
           </span>
           <div className="flex gap-1">
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors text-sm"
+              className="w-7 h-7 rounded-md border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors text-xs"
             >
               &#9664;
             </button>
             {!isCurrentWeek && (
               <button
                 onClick={() => setWeekParam('current')}
-                className="h-8 px-3 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors"
+                className="h-7 px-2.5 rounded-md bg-gray-900 text-white text-[11px] font-medium hover:bg-gray-800 transition-colors"
               >
                 Vandaag
               </button>
             )}
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors text-sm"
+              className="w-7 h-7 rounded-md border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors text-xs"
             >
               &#9654;
             </button>
@@ -267,36 +262,36 @@ export default function Dashboard() {
       </div>
 
       {/* Table - fills remaining space */}
-      <div className="flex-1 overflow-auto rounded-xl border border-gray-200 min-h-0">
+      <div className="flex-1 overflow-auto min-h-0">
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
-            <tr className="bg-gray-50">
-              <th rowSpan={2} className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-28">
+            <tr className="bg-gray-900">
+              <th rowSpan={2} className="px-5 py-2.5 text-left text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 w-28">
                 Dag
               </th>
-              <th rowSpan={2} className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 border-l border-gray-200">
+              <th rowSpan={2} className="px-4 py-2.5 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700">
                 Calls
               </th>
-              <th rowSpan={2} className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 border-l border-gray-200">
+              <th rowSpan={2} className="px-4 py-2.5 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700">
                 Chatbot
               </th>
               {TICKET_METRICS.map(m => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 border-l border-gray-200"
+                  className="px-3 py-2 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700"
                 >
                   {m.label}
                 </th>
               ))}
             </tr>
-            <tr className="bg-gray-50/60">
+            <tr className="bg-gray-800">
               {TICKET_METRICS.map(m => (
                 <Fragment key={m.key}>
-                  <th className="px-2 py-1.5 text-[10px] font-medium text-gray-400 border-b border-gray-200 border-l border-gray-200">
+                  <th className="px-2 py-1 text-[10px] font-medium text-gray-400 border-b border-gray-700 border-l border-gray-700">
                     08:00
                   </th>
-                  <th className="px-2 py-1.5 text-[10px] font-medium text-gray-400 border-b border-gray-200 border-l border-gray-100">
+                  <th className="px-2 py-1 text-[10px] font-medium text-gray-400 border-b border-gray-700 border-l border-gray-600">
                     18:00
                   </th>
                 </Fragment>
@@ -419,11 +414,11 @@ export default function Dashboard() {
           {/* Summary footer */}
           <tfoot>
             <tr className="bg-gray-50 border-t border-gray-200">
-              <td className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" colSpan={3}>
+              <td className="px-5 py-2 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider" colSpan={3}>
                 Week totaal
               </td>
-              <td className="px-3 py-3 text-xs text-gray-500" colSpan={10}>
-                <div className="flex items-center justify-center gap-8">
+              <td className="px-3 py-2 text-xs text-gray-400" colSpan={10}>
+                <div className="flex items-center justify-center gap-6">
                   <span>
                     Calls: <strong className="text-gray-900 text-sm">{totalCalls}</strong>
                   </span>
@@ -438,24 +433,6 @@ export default function Dashboard() {
             </tr>
           </tfoot>
         </table>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-3 flex items-center justify-between text-xs text-gray-400 flex-shrink-0">
-        <div>
-          {lastUpdate && (
-            <span>
-              Laatste update: {lastUpdate.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} CET
-            </span>
-          )}
-        </div>
-        <button
-          onClick={() => fetchData(true)}
-          disabled={refreshing}
-          className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
-        >
-          {refreshing ? 'Vernieuwen...' : 'Vernieuwen'}
-        </button>
       </div>
     </div>
   );
