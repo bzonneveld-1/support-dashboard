@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, Fragment } from 'react';
+import Image from 'next/image';
 import { triggerBackfill } from '@/app/actions';
 
 // ============ Types ============
@@ -77,7 +78,7 @@ function navigateWeek(mondayStr: string, direction: -1 | 1): string {
 function formatDateRange(startDate: string, endDate: string): string {
   const start = new Date(startDate + 'T12:00:00Z');
   const end = new Date(endDate + 'T12:00:00Z');
-  end.setUTCDate(end.getUTCDate() - 1); // endDate is next Monday (exclusive), -1 = Sunday
+  end.setUTCDate(end.getUTCDate() - 1);
 
   const startDay = start.getUTCDate();
   const endDay = end.getUTCDate();
@@ -127,15 +128,15 @@ function buildWeekDays(weekStart: string, metrics: MetricsRow[]): DayData[] {
 
 function getDeltaColor(morning: number | null, evening: number | null): string {
   if (morning == null || evening == null) return '';
-  if (evening < morning) return 'text-green-400';
-  if (evening > morning) return 'text-red-400';
+  if (evening < morning) return 'text-emerald-600';
+  if (evening > morning) return 'text-red-500';
   return '';
 }
 
 function getDeltaBg(morning: number | null, evening: number | null): string {
   if (morning == null || evening == null) return '';
-  if (evening < morning) return 'bg-green-500/10';
-  if (evening > morning) return 'bg-red-500/10';
+  if (evening < morning) return 'bg-emerald-50';
+  if (evening > morning) return 'bg-red-50';
   return '';
 }
 
@@ -185,7 +186,6 @@ export default function Dashboard() {
     setBackfilling(key);
     try {
       await triggerBackfill(date, timeSlot);
-      // Wait for n8n to process, then refresh
       setTimeout(() => fetchData(true), 8000);
     } catch {
       console.error('Backfill failed');
@@ -198,14 +198,11 @@ export default function Dashboard() {
   const days = data ? buildWeekDays(data.week, data.metrics) : [];
   const weekInfo = data ? getISOWeek(data.week) : null;
 
-  // Summary stats
   const totalCalls = days.reduce(
-    (sum, d) => sum + (d.evening?.total_calls ?? d.morning?.total_calls ?? 0),
-    0,
+    (sum, d) => sum + (d.evening?.total_calls ?? d.morning?.total_calls ?? 0), 0,
   );
   const totalChat = days.reduce(
-    (sum, d) => sum + (d.evening?.total_chatbot_chats ?? d.morning?.total_chatbot_chats ?? 0),
-    0,
+    (sum, d) => sum + (d.evening?.total_chatbot_chats ?? d.morning?.total_chatbot_chats ?? 0), 0,
   );
   const allOpenValues = days
     .flatMap(d => [d.morning?.all_open_tickets, d.evening?.all_open_tickets])
@@ -213,17 +210,11 @@ export default function Dashboard() {
   const avgOpen = allOpenValues.length
     ? (allOpenValues.reduce((a, b) => a + b, 0) / allOpenValues.length).toFixed(1)
     : '—';
-  const latestCollectedAt = data?.metrics
-    .map(m => m.collected_at)
-    .filter(Boolean)
-    .sort()
-    .pop();
 
-  // Loading state
   if (loading && !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-2xl text-gray-400 animate-pulse">Laden...</div>
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-xl text-gray-400 animate-pulse">Laden...</div>
       </div>
     );
   }
@@ -231,34 +222,43 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="min-h-screen p-4 lg:p-8 max-w-[1920px] mx-auto">
+    <div className="h-screen flex flex-col px-6 py-4 lg:px-10 lg:py-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-        <h1 className="text-2xl lg:text-4xl font-bold tracking-tight">Support Dashboard</h1>
-        <div className="flex items-center gap-3">
-          <span className="text-base lg:text-lg text-gray-400">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
+        <div className="flex items-center gap-5">
+          <Image
+            src="/bold-logo.png"
+            alt="Bold"
+            width={100}
+            height={39}
+            className="h-8 w-auto"
+            priority
+          />
+          <div className="h-6 w-px bg-gray-200" />
+          <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Support Dashboard</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-500">
             Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
           </span>
           <div className="flex gap-1">
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-              className="px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-sm font-medium transition-colors"
-              title="Vorige week"
+              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors text-sm"
             >
               &#9664;
             </button>
             {!isCurrentWeek && (
               <button
                 onClick={() => setWeekParam('current')}
-                className="px-3 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-colors"
+                className="h-8 px-3 rounded-lg bg-gray-900 text-white text-xs font-medium hover:bg-gray-800 transition-colors"
               >
                 Vandaag
               </button>
             )}
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-              className="px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-sm font-medium transition-colors"
-              title="Volgende week"
+              className="w-8 h-8 rounded-lg border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors text-sm"
             >
               &#9654;
             </button>
@@ -266,39 +266,37 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-800">
-        <table className="w-full border-collapse text-center">
-          <thead>
-            {/* Row 1: metric group headers */}
-            <tr className="bg-gray-800/80">
-              <th rowSpan={2} className="px-4 py-3 text-left text-sm font-semibold text-gray-300 border-b border-gray-700 w-28">
+      {/* Table - fills remaining space */}
+      <div className="flex-1 overflow-auto rounded-xl border border-gray-200 min-h-0">
+        <table className="w-full h-full border-collapse text-center">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-gray-50">
+              <th rowSpan={2} className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 w-28">
                 Dag
               </th>
-              <th rowSpan={2} className="px-3 py-3 text-sm font-semibold text-gray-300 border-b border-gray-700 border-l border-gray-700">
+              <th rowSpan={2} className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 border-l border-gray-200">
                 Calls
               </th>
-              <th rowSpan={2} className="px-3 py-3 text-sm font-semibold text-gray-300 border-b border-gray-700 border-l border-gray-700">
+              <th rowSpan={2} className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-200 border-l border-gray-200">
                 Chatbot
               </th>
               {TICKET_METRICS.map(m => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className="px-3 py-2 text-sm font-semibold text-gray-300 border-b border-gray-700/50 border-l border-gray-700"
+                  className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100 border-l border-gray-200"
                 >
                   {m.label}
                 </th>
               ))}
             </tr>
-            {/* Row 2: 08 / 18 sub-headers */}
-            <tr className="bg-gray-800/40">
+            <tr className="bg-gray-50/60">
               {TICKET_METRICS.map(m => (
                 <Fragment key={m.key}>
-                  <th className="px-2 py-1.5 text-xs font-medium text-gray-500 border-b border-gray-700 border-l border-gray-700">
+                  <th className="px-2 py-1.5 text-[10px] font-medium text-gray-400 border-b border-gray-200 border-l border-gray-200">
                     08:00
                   </th>
-                  <th className="px-2 py-1.5 text-xs font-medium text-gray-500 border-b border-gray-700 border-l border-gray-700/30">
+                  <th className="px-2 py-1.5 text-[10px] font-medium text-gray-400 border-b border-gray-200 border-l border-gray-100">
                     18:00
                   </th>
                 </Fragment>
@@ -309,36 +307,35 @@ export default function Dashboard() {
             {days.map(day => {
               const dailyCalls = day.evening?.total_calls ?? day.morning?.total_calls ?? null;
               const dailyChat = day.evening?.total_chatbot_chats ?? day.morning?.total_chatbot_chats ?? null;
-              const hasMorning = day.morning !== null;
-              const hasEvening = day.evening !== null;
-              const missingMorning = !day.isFuture && !hasMorning;
-              const missingEvening = !day.isFuture && !hasEvening;
+              const missingMorning = !day.isFuture && !day.morning;
+              const missingEvening = !day.isFuture && !day.evening;
 
               return (
                 <tr
                   key={day.date}
                   className={`
-                    border-b border-gray-800 transition-colors
-                    ${day.isToday ? 'bg-blue-950/30' : 'hover:bg-gray-900/50'}
-                    ${day.isFuture ? 'opacity-40' : ''}
+                    border-b border-gray-100 transition-colors
+                    ${day.isToday ? 'bg-blue-50/40' : 'hover:bg-gray-50/50'}
+                    ${day.isFuture ? 'opacity-30' : ''}
                   `}
+                  style={{ height: '20%' }}
                 >
-                  {/* Day name */}
-                  <td className="px-4 py-3 text-left font-medium border-r border-gray-800">
-                    <span className={day.isToday ? 'text-blue-400' : ''}>
+                  {/* Day */}
+                  <td className="px-5 py-4 text-left font-medium border-r border-gray-100">
+                    <span className={day.isToday ? 'text-blue-600' : 'text-gray-900'}>
                       {day.dayName}
                     </span>
                     {day.isToday && (
-                      <span className="ml-2 text-xs text-blue-400/60">vandaag</span>
+                      <span className="ml-2 text-[10px] font-medium text-blue-400 uppercase tracking-wider">vandaag</span>
                     )}
                   </td>
 
-                  {/* Calls */}
-                  <td className="px-3 py-3 border-l border-gray-800 tabular-nums">
+                  {/* Calls (daily total) */}
+                  <td className="px-4 py-4 border-l border-gray-100 tabular-nums">
                     {day.isFuture ? (
-                      <span className="text-gray-700">—</span>
+                      <span className="text-gray-200">—</span>
                     ) : dailyCalls != null ? (
-                      <span className="text-xl font-semibold">{dailyCalls}</span>
+                      <span className="text-2xl font-semibold text-gray-900">{dailyCalls}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -347,12 +344,12 @@ export default function Dashboard() {
                     )}
                   </td>
 
-                  {/* Chatbot */}
-                  <td className="px-3 py-3 border-l border-gray-800 tabular-nums">
+                  {/* Chatbot (daily total) */}
+                  <td className="px-4 py-4 border-l border-gray-100 tabular-nums">
                     {day.isFuture ? (
-                      <span className="text-gray-700">—</span>
+                      <span className="text-gray-200">—</span>
                     ) : dailyChat != null ? (
-                      <span className="text-xl font-semibold">{dailyChat}</span>
+                      <span className="text-2xl font-semibold text-gray-900">{dailyChat}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -361,7 +358,7 @@ export default function Dashboard() {
                     )}
                   </td>
 
-                  {/* Ticket metrics: 08 + 18 per metric */}
+                  {/* Ticket metrics: 08 + 18 */}
                   {TICKET_METRICS.map(metric => {
                     const morningVal = day.morning?.[metric.key] ?? null;
                     const eveningVal = day.evening?.[metric.key] ?? null;
@@ -372,32 +369,32 @@ export default function Dashboard() {
                     return (
                       <Fragment key={metric.key}>
                         {/* 08:00 */}
-                        <td className="px-3 py-3 border-l border-gray-800 tabular-nums">
+                        <td className="px-3 py-4 border-l border-gray-100 tabular-nums">
                           {day.isFuture ? (
-                            <span className="text-gray-700">—</span>
+                            <span className="text-gray-200">—</span>
                           ) : morningVal != null ? (
-                            <span className="text-xl font-semibold">{morningVal}</span>
+                            <span className="text-2xl font-semibold text-gray-900">{morningVal}</span>
                           ) : missingMorning ? (
                             <MissingCell
                               backfilling={backfilling === `${day.date}-08:00`}
                               onBackfill={() => handleBackfill(day.date, '08:00')}
                             />
                           ) : (
-                            <span className="text-gray-700">—</span>
+                            <span className="text-gray-200">—</span>
                           )}
                         </td>
 
                         {/* 18:00 */}
-                        <td className={`px-3 py-3 border-l border-gray-800/30 tabular-nums ${deltaBg}`}>
+                        <td className={`px-3 py-4 border-l border-gray-50 tabular-nums rounded-sm ${deltaBg}`}>
                           {day.isFuture ? (
-                            <span className="text-gray-700">—</span>
+                            <span className="text-gray-200">—</span>
                           ) : eveningVal != null ? (
                             <span className="inline-flex items-baseline gap-1">
-                              <span className={`text-xl font-semibold ${deltaColor}`}>
+                              <span className={`text-2xl font-semibold ${deltaColor || 'text-gray-900'}`}>
                                 {eveningVal}
                               </span>
                               {delta && (
-                                <span className={`text-xs ${deltaColor} opacity-70`}>
+                                <span className={`text-xs font-medium ${deltaColor} opacity-60`}>
                                   {delta}
                                 </span>
                               )}
@@ -408,7 +405,7 @@ export default function Dashboard() {
                               onBackfill={() => handleBackfill(day.date, '18:00')}
                             />
                           ) : (
-                            <span className="text-gray-700">—</span>
+                            <span className="text-gray-200">—</span>
                           )}
                         </td>
                       </Fragment>
@@ -421,20 +418,20 @@ export default function Dashboard() {
 
           {/* Summary footer */}
           <tfoot>
-            <tr className="bg-gray-800/50 border-t border-gray-700">
-              <td className="px-4 py-3 text-left text-sm font-semibold text-gray-400" colSpan={3}>
-                WEEK TOTAAL
+            <tr className="bg-gray-50 border-t border-gray-200">
+              <td className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" colSpan={3}>
+                Week totaal
               </td>
-              <td className="px-3 py-3 text-sm text-gray-400" colSpan={10}>
+              <td className="px-3 py-3 text-xs text-gray-500" colSpan={10}>
                 <div className="flex items-center justify-center gap-8">
                   <span>
-                    Calls: <strong className="text-gray-200 text-base">{totalCalls}</strong>
+                    Calls: <strong className="text-gray-900 text-sm">{totalCalls}</strong>
                   </span>
                   <span>
-                    Chatbot: <strong className="text-gray-200 text-base">{totalChat}</strong>
+                    Chatbot: <strong className="text-gray-900 text-sm">{totalChat}</strong>
                   </span>
                   <span>
-                    Gem. All Open: <strong className="text-gray-200 text-base">{avgOpen}</strong>
+                    Gem. All Open: <strong className="text-gray-900 text-sm">{avgOpen}</strong>
                   </span>
                 </div>
               </td>
@@ -443,29 +440,19 @@ export default function Dashboard() {
         </table>
       </div>
 
-      {/* Footer bar */}
-      <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between text-sm text-gray-500 gap-2">
+      {/* Footer */}
+      <div className="mt-3 flex items-center justify-between text-xs text-gray-400 flex-shrink-0">
         <div>
           {lastUpdate && (
             <span>
               Laatste update: {lastUpdate.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} CET
             </span>
           )}
-          {latestCollectedAt && (
-            <span className="ml-4">
-              Data verzameld: {new Date(latestCollectedAt).toLocaleString('nl-NL', {
-                day: 'numeric',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </span>
-          )}
         </div>
         <button
           onClick={() => fetchData(true)}
           disabled={refreshing}
-          className="px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 disabled:opacity-50 text-sm font-medium transition-colors"
+          className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
         >
           {refreshing ? 'Vernieuwen...' : 'Vernieuwen'}
         </button>
@@ -482,14 +469,14 @@ function MissingCell({ backfilling, onBackfill }: { backfilling: boolean; onBack
       onClick={onBackfill}
       disabled={backfilling}
       className="group relative"
-      title="Klik om data op te halen (backfill)"
+      title="Klik om data op te halen"
     >
       {backfilling ? (
-        <span className="text-amber-400 animate-pulse text-sm">ophalen...</span>
+        <span className="text-amber-500 animate-pulse text-sm">ophalen...</span>
       ) : (
         <>
-          <span className="text-amber-500/50 text-lg">-</span>
-          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gray-700 text-xs text-gray-300 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          <span className="text-gray-300 text-lg">—</span>
+          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
             Backfill
           </span>
         </>
