@@ -50,7 +50,7 @@ export default function ChartsView() {
 
   const periodSelector = (
     <div className="flex gap-1">
-      {[2, 4, 8].map(w => (
+      {[1, 2, 4, 8].map(w => (
         <button
           key={w}
           onClick={() => setWeeks(w)}

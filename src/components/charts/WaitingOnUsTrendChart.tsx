@@ -40,7 +40,7 @@ export default function WaitingOnUsTrendChart({ metrics }: { metrics: MetricsRow
         <Legend />
         <Line
           type="monotone" dataKey="Tickets WoU" name="Tickets WoU"
-          stroke="#FF3B30" dot={false} strokeWidth={2} connectNulls
+          stroke="#1C1C1E" dot={false} strokeWidth={2} connectNulls
         />
         <Line
           type="monotone" dataKey="WA WoU" name="WA WoU"

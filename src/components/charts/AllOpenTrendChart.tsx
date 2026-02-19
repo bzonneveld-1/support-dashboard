@@ -40,11 +40,11 @@ export default function AllOpenTrendChart({ metrics }: { metrics: MetricsRow[] }
         <Legend />
         <Line
           type="monotone" dataKey="morning" name="08:00"
-          stroke="#007AFF" strokeDasharray="5 5" dot={false} strokeWidth={2} connectNulls
+          stroke="#1C1C1E" strokeDasharray="5 5" dot={false} strokeWidth={2} connectNulls
         />
         <Line
           type="monotone" dataKey="evening" name="18:00"
-          stroke="#5856D6" dot={false} strokeWidth={2} connectNulls
+          stroke="#34C759" dot={false} strokeWidth={2} connectNulls
         />
       </LineChart>
     </ResponsiveContainer>

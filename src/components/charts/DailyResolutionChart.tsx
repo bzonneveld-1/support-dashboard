@@ -45,7 +45,7 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
         <ReferenceLine y={0} stroke="#8E8E93" />
         <Bar dataKey="resolved" name="Net Resolved" radius={[4, 4, 0, 0]}>
           {data.map((entry, i) => (
-            <Cell key={i} fill={entry.resolved >= 0 ? '#34C759' : '#FF3B30'} />
+            <Cell key={i} fill={entry.resolved >= 0 ? '#34C759' : '#FF9500'} />
           ))}
         </Bar>
       </BarChart>
