@@ -221,7 +221,7 @@ export default function Dashboard() {
   return (
     <div className="h-screen flex flex-col p-5 lg:p-8 bg-[#F2F2F7]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
+      <div className="flex flex-col items-center mb-4 flex-shrink-0 gap-1">
         <div className="flex items-center gap-3">
           <Image
             src="/bold-logo.png"
@@ -235,31 +235,29 @@ export default function Dashboard() {
           <h1 className="text-sm font-semibold text-[#1C1C1E] tracking-tight">Support Dashboard</h1>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
+            className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+          >
+            &#9664;
+          </button>
           <span className="text-xs text-[#8E8E93]">
             Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
           </span>
-          <div className="flex gap-1">
+          {!isCurrentWeek && (
             <button
-              onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+              onClick={() => setWeekParam('current')}
+              className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
             >
-              &#9664;
+              Today
             </button>
-            {!isCurrentWeek && (
-              <button
-                onClick={() => setWeekParam('current')}
-                className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
-              >
-                Today
-              </button>
-            )}
-            <button
-              onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
-            >
-              &#9654;
-            </button>
-          </div>
+          )}
+          <button
+            onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
+            className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+          >
+            &#9654;
+          </button>
         </div>
       </div>
 
