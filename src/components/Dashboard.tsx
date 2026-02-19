@@ -87,9 +87,9 @@ function formatDateRange(startDate: string, endDate: string): string {
   const year = end.getUTCFullYear();
 
   if (startMonth === endMonth) {
-    return `${startDay} - ${endDay} ${endMonth} ${year}`;
+    return `${startDay}–${endDay} ${endMonth} ${year}`;
   }
-  return `${startDay} ${startMonth} - ${endDay} ${endMonth} ${year}`;
+  return `${startDay} ${startMonth} – ${endDay} ${endMonth} ${year}`;
 }
 
 function getTodayStr(): string {
@@ -128,15 +128,8 @@ function buildWeekDays(weekStart: string, metrics: MetricsRow[]): DayData[] {
 
 function getDeltaColor(morning: number | null, evening: number | null): string {
   if (morning == null || evening == null) return '';
-  if (evening < morning) return 'text-emerald-600';
-  if (evening > morning) return 'text-red-500';
-  return '';
-}
-
-function getDeltaBg(morning: number | null, evening: number | null): string {
-  if (morning == null || evening == null) return '';
-  if (evening < morning) return 'bg-emerald-50';
-  if (evening > morning) return 'bg-red-50';
+  if (evening < morning) return 'text-[#34C759]';
+  if (evening > morning) return 'text-[#FF3B30]';
   return '';
 }
 
@@ -193,11 +186,12 @@ export default function Dashboard() {
   const days = data ? buildWeekDays(data.week, data.metrics) : [];
   const weekInfo = data ? getISOWeek(data.week) : null;
 
+  // Only count calls/chatbot from evening rows (daily totals)
   const totalCalls = days.reduce(
-    (sum, d) => sum + (d.evening?.total_calls ?? d.morning?.total_calls ?? 0), 0,
+    (sum, d) => sum + (d.evening?.total_calls ?? 0), 0,
   );
   const totalChat = days.reduce(
-    (sum, d) => sum + (d.evening?.total_chatbot_chats ?? d.morning?.total_chatbot_chats ?? 0), 0,
+    (sum, d) => sum + (d.evening?.total_chatbot_chats ?? 0), 0,
   );
   const allOpenValues = days
     .flatMap(d => [d.morning?.all_open_tickets, d.evening?.all_open_tickets])
@@ -208,8 +202,8 @@ export default function Dashboard() {
 
   if (loading && !data) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-400 animate-pulse">Laden...</div>
+      <div className="h-screen flex items-center justify-center bg-[#F2F2F7]">
+        <div className="text-lg text-[#8E8E93] animate-pulse">Laden...</div>
       </div>
     );
   }
@@ -217,9 +211,9 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="h-screen flex flex-col p-4 lg:p-6 bg-gray-50/50">
+    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[#F2F2F7]">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-2.5 flex-shrink-0 bg-white rounded-t-xl border border-b-0 border-gray-200">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <Image
             src="/bold-logo.png"
@@ -229,31 +223,31 @@ export default function Dashboard() {
             className="h-6 w-auto"
             priority
           />
-          <div className="h-4 w-px bg-gray-200" />
-          <h1 className="text-sm font-semibold text-gray-900 tracking-tight">Support Dashboard</h1>
+          <div className="h-4 w-px bg-[#E5E5EA]" />
+          <h1 className="text-sm font-semibold text-[#1C1C1E] tracking-tight">Support Dashboard</h1>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-[#8E8E93]">
             Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
           </span>
           <div className="flex gap-1">
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-              className="w-7 h-7 rounded-md border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors text-xs"
+              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
             >
               &#9664;
             </button>
             {!isCurrentWeek && (
               <button
                 onClick={() => setWeekParam('current')}
-                className="h-7 px-2.5 rounded-md bg-gray-900 text-white text-[11px] font-medium hover:bg-gray-800 transition-colors"
+                className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
               >
                 Vandaag
               </button>
             )}
             <button
               onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-              className="w-7 h-7 rounded-md border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-colors text-xs"
+              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
             >
               &#9654;
             </button>
@@ -261,38 +255,38 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Table - fills remaining space */}
-      <div className="flex-1 overflow-auto min-h-0 bg-white rounded-b-xl border border-gray-200">
+      {/* Table card */}
+      <div className="flex-1 overflow-auto min-h-0 bg-white rounded-2xl shadow-sm">
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
-            <tr className="bg-gray-900">
-              <th rowSpan={2} className="px-5 py-2.5 text-left text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 w-28">
+            <tr className="bg-[#1D1D1F]">
+              <th rowSpan={2} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px]">
                 Dag
               </th>
-              <th rowSpan={2} className="px-4 py-2.5 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700">
+              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
                 Calls
               </th>
-              <th rowSpan={2} className="px-4 py-2.5 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700">
+              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
                 Chatbot
               </th>
               {TICKET_METRICS.map(m => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className="px-3 py-2 text-[11px] font-semibold text-white uppercase tracking-wider border-b border-gray-700 border-l border-gray-700"
+                  className="px-3 py-1.5 text-[11px] font-medium text-white uppercase tracking-wider"
                 >
                   {m.label}
                 </th>
               ))}
             </tr>
-            <tr className="bg-gray-800">
+            <tr className="bg-[#1D1D1F]">
               {TICKET_METRICS.map(m => (
                 <Fragment key={m.key}>
-                  <th className="px-2 py-1 text-[10px] font-medium text-gray-400 border-b border-gray-700 border-l border-gray-700">
-                    08:00
+                  <th className="px-2 pb-1.5 text-[10px] font-normal text-white/40">
+                    08
                   </th>
-                  <th className="px-2 py-1 text-[10px] font-medium text-gray-400 border-b border-gray-700 border-l border-gray-600">
-                    18:00
+                  <th className="px-2 pb-1.5 text-[10px] font-normal text-white/40">
+                    18
                   </th>
                 </Fragment>
               ))}
@@ -300,8 +294,9 @@ export default function Dashboard() {
           </thead>
           <tbody>
             {days.map(day => {
-              const dailyCalls = day.evening?.total_calls ?? day.morning?.total_calls ?? null;
-              const dailyChat = day.evening?.total_chatbot_chats ?? day.morning?.total_chatbot_chats ?? null;
+              // Only show calls/chatbot from evening row (daily totals from midnight run)
+              const dailyCalls = day.evening?.total_calls ?? null;
+              const dailyChat = day.evening?.total_chatbot_chats ?? null;
               const missingMorning = !day.isFuture && !day.morning;
               const missingEvening = !day.isFuture && !day.evening;
 
@@ -309,28 +304,31 @@ export default function Dashboard() {
                 <tr
                   key={day.date}
                   className={`
-                    border-b border-gray-100 transition-colors
-                    ${day.isToday ? 'bg-blue-50/40' : 'hover:bg-gray-50/50'}
-                    ${day.isFuture ? 'opacity-30' : ''}
+                    border-b border-[#F2F2F7] transition-colors
+                    ${day.isToday ? 'bg-[#007AFF]/[0.03]' : ''}
+                    ${day.isFuture ? 'opacity-20' : ''}
                   `}
                   style={{ height: '20%' }}
                 >
-                  {/* Day */}
-                  <td className="px-5 py-4 text-left font-medium border-r border-gray-100">
-                    <span className={day.isToday ? 'text-blue-600' : 'text-gray-900'}>
+                  {/* Day name */}
+                  <td className="px-5 py-2.5 text-left relative">
+                    {day.isToday && (
+                      <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-[#007AFF]" />
+                    )}
+                    <span className={`text-[13px] font-medium ${day.isToday ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>
                       {day.dayName}
                     </span>
                     {day.isToday && (
-                      <span className="ml-2 text-[10px] font-medium text-blue-400 uppercase tracking-wider">vandaag</span>
+                      <span className="ml-1.5 text-[9px] font-medium text-[#007AFF]/60 uppercase tracking-widest">vandaag</span>
                     )}
                   </td>
 
-                  {/* Calls (daily total) */}
-                  <td className="px-4 py-4 border-l border-gray-100 tabular-nums">
+                  {/* Calls */}
+                  <td className="px-4 py-2.5 tabular-nums">
                     {day.isFuture ? (
-                      <span className="text-gray-200">—</span>
+                      <span className="text-[#C7C7CC]">—</span>
                     ) : dailyCalls != null ? (
-                      <span className="text-2xl font-semibold text-gray-900">{dailyCalls}</span>
+                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyCalls}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -339,12 +337,12 @@ export default function Dashboard() {
                     )}
                   </td>
 
-                  {/* Chatbot (daily total) */}
-                  <td className="px-4 py-4 border-l border-gray-100 tabular-nums">
+                  {/* Chatbot */}
+                  <td className="px-4 py-2.5 tabular-nums">
                     {day.isFuture ? (
-                      <span className="text-gray-200">—</span>
+                      <span className="text-[#C7C7CC]">—</span>
                     ) : dailyChat != null ? (
-                      <span className="text-2xl font-semibold text-gray-900">{dailyChat}</span>
+                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyChat}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -353,43 +351,43 @@ export default function Dashboard() {
                     )}
                   </td>
 
-                  {/* Ticket metrics: 08 + 18 */}
-                  {TICKET_METRICS.map(metric => {
+                  {/* Ticket metrics: 08 + 18 per group */}
+                  {TICKET_METRICS.map((metric, groupIdx) => {
                     const morningVal = day.morning?.[metric.key] ?? null;
                     const eveningVal = day.evening?.[metric.key] ?? null;
                     const delta = formatDelta(morningVal, eveningVal);
                     const deltaColor = getDeltaColor(morningVal, eveningVal);
-                    const deltaBg = getDeltaBg(morningVal, eveningVal);
+                    const isFirstGroup = groupIdx === 0;
 
                     return (
                       <Fragment key={metric.key}>
                         {/* 08:00 */}
-                        <td className="px-3 py-4 border-l border-gray-100 tabular-nums">
+                        <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3'}`}>
                           {day.isFuture ? (
-                            <span className="text-gray-200">—</span>
+                            <span className="text-[#C7C7CC]">—</span>
                           ) : morningVal != null ? (
-                            <span className="text-2xl font-semibold text-gray-900">{morningVal}</span>
+                            <span className="text-xl font-medium text-[#1C1C1E]">{morningVal}</span>
                           ) : missingMorning ? (
                             <MissingCell
                               backfilling={backfilling === `${day.date}-08:00`}
                               onBackfill={() => handleBackfill(day.date, '08:00')}
                             />
                           ) : (
-                            <span className="text-gray-200">—</span>
+                            <span className="text-[#C7C7CC]">—</span>
                           )}
                         </td>
 
                         {/* 18:00 */}
-                        <td className={`px-3 py-4 border-l border-gray-50 tabular-nums rounded-sm ${deltaBg}`}>
+                        <td className="px-3 py-2.5 tabular-nums">
                           {day.isFuture ? (
-                            <span className="text-gray-200">—</span>
+                            <span className="text-[#C7C7CC]">—</span>
                           ) : eveningVal != null ? (
                             <span className="inline-flex items-baseline gap-1">
-                              <span className={`text-2xl font-semibold ${deltaColor || 'text-gray-900'}`}>
+                              <span className={`text-xl font-medium ${deltaColor || 'text-[#1C1C1E]'}`}>
                                 {eveningVal}
                               </span>
                               {delta && (
-                                <span className={`text-xs font-medium ${deltaColor} opacity-60`}>
+                                <span className={`text-[10px] font-medium ${deltaColor}`}>
                                   {delta}
                                 </span>
                               )}
@@ -400,7 +398,7 @@ export default function Dashboard() {
                               onBackfill={() => handleBackfill(day.date, '18:00')}
                             />
                           ) : (
-                            <span className="text-gray-200">—</span>
+                            <span className="text-[#C7C7CC]">—</span>
                           )}
                         </td>
                       </Fragment>
@@ -411,23 +409,19 @@ export default function Dashboard() {
             })}
           </tbody>
 
-          {/* Summary footer */}
+          {/* Summary */}
           <tfoot>
-            <tr className="bg-gray-50 border-t border-gray-200">
-              <td className="px-5 py-2 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider" colSpan={3}>
-                Week totaal
+            <tr className="border-t border-[#E5E5EA]">
+              <td className="px-5 py-2.5 text-left" colSpan={3}>
+                <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week totaal</span>
               </td>
-              <td className="px-3 py-2 text-xs text-gray-400" colSpan={10}>
-                <div className="flex items-center justify-center gap-6">
-                  <span>
-                    Calls: <strong className="text-gray-900 text-sm">{totalCalls}</strong>
-                  </span>
-                  <span>
-                    Chatbot: <strong className="text-gray-900 text-sm">{totalChat}</strong>
-                  </span>
-                  <span>
-                    Gem. All Open: <strong className="text-gray-900 text-sm">{avgOpen}</strong>
-                  </span>
+              <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
+                <div className="flex items-center justify-center gap-5">
+                  <span>Calls <strong className="text-[#1C1C1E] text-sm font-medium">{totalCalls}</strong></span>
+                  <span className="text-[#E5E5EA]">|</span>
+                  <span>Chatbot <strong className="text-[#1C1C1E] text-sm font-medium">{totalChat}</strong></span>
+                  <span className="text-[#E5E5EA]">|</span>
+                  <span>Gem. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
                 </div>
               </td>
             </tr>
@@ -449,14 +443,9 @@ function MissingCell({ backfilling, onBackfill }: { backfilling: boolean; onBack
       title="Klik om data op te halen"
     >
       {backfilling ? (
-        <span className="text-amber-500 animate-pulse text-sm">ophalen...</span>
+        <span className="text-[#FF9500] animate-pulse text-xs">ophalen...</span>
       ) : (
-        <>
-          <span className="text-gray-300 text-lg">—</span>
-          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            Backfill
-          </span>
-        </>
+        <span className="text-[#C7C7CC]">—</span>
       )}
     </button>
   );
