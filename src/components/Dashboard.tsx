@@ -229,7 +229,7 @@ export default function Dashboard() {
             alt="Bold"
             width={80}
             height={31}
-            className="h-6 w-auto"
+            className="h-8 w-auto -mt-1"
             priority
           />
         </div>
