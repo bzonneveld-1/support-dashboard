@@ -316,9 +316,6 @@ export default function Dashboard() {
               const dailyChat = day.evening?.total_chatbot_chats ?? null;
               const dailyEmails = day.evening?.total_emails ?? null;
               const dailyWaMsgs = day.evening?.total_wa_messages ?? null;
-              const missingMorning = !day.isFuture && !day.morning;
-              const missingEvening = !day.isFuture && !day.evening;
-
               return (
                 <tr
                   key={day.date}
@@ -408,17 +405,12 @@ export default function Dashboard() {
 
                     return (
                       <Fragment key={metric.key}>
-                        {/* 08:00 */}
+                        {/* 08:00 — ticket snapshots can't be backfilled */}
                         <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3 border-l border-[#F2F2F7]'}`}>
                           {day.isFuture ? (
                             <span className="text-[#C7C7CC]">—</span>
                           ) : morningVal != null ? (
                             <span className="text-xl font-medium text-[#1C1C1E]">{morningVal}</span>
-                          ) : missingMorning ? (
-                            <MissingCell
-                              backfilling={backfilling === `${day.date}-08:00`}
-                              onBackfill={() => handleBackfill(day.date, '08:00')}
-                            />
                           ) : (
                             <span className="text-[#C7C7CC]">—</span>
                           )}
@@ -439,11 +431,6 @@ export default function Dashboard() {
                                 </span>
                               )}
                             </span>
-                          ) : missingEvening ? (
-                            <MissingCell
-                              backfilling={backfilling === `${day.date}-18:00`}
-                              onBackfill={() => handleBackfill(day.date, '18:00')}
-                            />
                           ) : (
                             <span className="text-[#C7C7CC]">—</span>
                           )}

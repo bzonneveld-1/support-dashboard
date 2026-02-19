@@ -10,7 +10,7 @@ export async function triggerBackfill(date: string, timeSlot: string) {
     const res = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ target_date: date, target_time: timeSlot }),
+      body: JSON.stringify({ target_date: date, target_time: timeSlot, collect_mode: 'daily_totals' }),
     });
     return { success: res.ok };
   } catch {
