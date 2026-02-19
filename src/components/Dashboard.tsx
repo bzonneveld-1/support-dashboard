@@ -272,10 +272,10 @@ export default function Dashboard() {
               <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px] border-r border-white/10">
                 Dag
               </th>
-              <th colSpan={4} className="px-4 pt-2 pb-0 text-[10px] font-medium text-white/25 uppercase tracking-[0.15em] border-r border-white/10">
+              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/50 uppercase tracking-[0.12em] border-r border-white/10">
                 Dagtotalen
               </th>
-              <th colSpan={10} className="px-4 pt-2 pb-0 text-[10px] font-medium text-white/25 uppercase tracking-[0.15em]">
+              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/50 uppercase tracking-[0.12em]">
                 Ticket Snapshots
               </th>
             </tr>
@@ -299,10 +299,10 @@ export default function Dashboard() {
             <tr className="bg-[#1D1D1F]">
               {TICKET_METRICS.map((m, i) => (
                 <Fragment key={m.key}>
-                  <th className={`px-2 pb-1.5 text-[10px] font-normal text-white/40 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
+                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-white/50 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
                     08
                   </th>
-                  <th className="px-2 pb-1.5 text-[10px] font-normal text-white/40">
+                  <th className="px-2 pb-1.5 text-[10px] font-medium text-white/50">
                     18
                   </th>
                 </Fragment>
