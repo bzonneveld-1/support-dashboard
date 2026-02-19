@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, Fragment } from 'react';
-import Image from 'next/image';
 import { triggerBackfill } from '@/app/actions';
+import NavHeader from './NavHeader';
 
 // ============ Types ============
 
@@ -220,47 +220,37 @@ export default function Dashboard() {
 
   return (
     <div className="h-screen flex flex-col p-5 lg:p-8 bg-[#F2F2F7]">
-      {/* Header */}
-      <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
-        <h1 className="text-sm font-semibold text-[#1C1C1E] tracking-tight">Support Dashboard</h1>
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <Image
-            src="/bold-logo.png"
-            alt="Bold"
-            width={80}
-            height={31}
-            className="h-8 w-auto -mt-1"
-            priority
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-[#8E8E93]">
-            Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
-          </span>
-          <div className="flex gap-1">
-            <button
-              onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
-            >
-              &#9664;
-            </button>
-            {!isCurrentWeek && (
+      <NavHeader
+        rightContent={
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-[#8E8E93]">
+              Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
+            </span>
+            <div className="flex gap-1">
               <button
-                onClick={() => setWeekParam('current')}
-                className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
+                onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
+                className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
               >
-                Today
+                &#9664;
               </button>
-            )}
-            <button
-              onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-              className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
-            >
-              &#9654;
-            </button>
+              {!isCurrentWeek && (
+                <button
+                  onClick={() => setWeekParam('current')}
+                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
+                >
+                  Today
+                </button>
+              )}
+              <button
+                onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
+                className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+              >
+                &#9654;
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Table card */}
       <div className="flex-1 overflow-auto min-h-0 bg-white rounded-2xl shadow-sm">

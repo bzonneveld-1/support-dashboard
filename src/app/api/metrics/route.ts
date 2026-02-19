@@ -61,11 +61,25 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const weeksParam = searchParams.get('weeks');
   const week = searchParams.get('week') || 'current';
 
-  let bounds;
+  let startDate: string;
+  let endDate: string;
+
   try {
-    bounds = getWeekBounds(week);
+    if (weeksParam) {
+      const numWeeks = Math.min(Math.max(parseInt(weeksParam) || 4, 1), 12);
+      const currentBounds = getWeekBounds('current');
+      endDate = currentBounds.endDate;
+      const start = new Date(currentBounds.startDate + 'T12:00:00Z');
+      start.setUTCDate(start.getUTCDate() - (numWeeks - 1) * 7);
+      startDate = start.toISOString().split('T')[0];
+    } else {
+      const bounds = getWeekBounds(week);
+      startDate = bounds.startDate;
+      endDate = bounds.endDate;
+    }
   } catch (err) {
     return Response.json({ error: (err as Error).message }, { status: 400 });
   }
@@ -73,8 +87,8 @@ export async function GET(request: Request) {
   const { data, error } = await supabase
     .from('daily_metrics')
     .select('*')
-    .gte('metric_date', bounds.startDate)
-    .lt('metric_date', bounds.endDate)
+    .gte('metric_date', startDate)
+    .lt('metric_date', endDate)
     .order('metric_date')
     .order('time_slot');
 
@@ -83,8 +97,8 @@ export async function GET(request: Request) {
   }
 
   return Response.json({
-    week: bounds.startDate,
-    weekEnd: bounds.endDate,
+    week: startDate,
+    weekEnd: endDate,
     metrics: data,
   });
 }
