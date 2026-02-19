@@ -16,6 +16,8 @@ export interface MetricsRow {
   waiting_on_us: number | null;
   total_calls: number | null;
   total_chatbot_chats: number | null;
+  total_emails: number | null;
+  total_wa_messages: number | null;
   collected_at: string;
   created_at: string;
 }

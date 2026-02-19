@@ -17,6 +17,8 @@ interface MetricsRow {
   waiting_on_us: number | null;
   total_calls: number | null;
   total_chatbot_chats: number | null;
+  total_emails: number | null;
+  total_wa_messages: number | null;
   collected_at: string;
   created_at: string;
 }
@@ -193,6 +195,12 @@ export default function Dashboard() {
   const totalChat = days.reduce(
     (sum, d) => sum + (d.evening?.total_chatbot_chats ?? 0), 0,
   );
+  const totalEmails = days.reduce(
+    (sum, d) => sum + (d.evening?.total_emails ?? 0), 0,
+  );
+  const totalWaMsgs = days.reduce(
+    (sum, d) => sum + (d.evening?.total_wa_messages ?? 0), 0,
+  );
   const allOpenValues = days
     .flatMap(d => [d.morning?.all_open_tickets, d.evening?.all_open_tickets])
     .filter((v): v is number => v != null);
@@ -269,6 +277,12 @@ export default function Dashboard() {
               <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
                 Chatbot
               </th>
+              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
+                Emails
+              </th>
+              <th rowSpan={2} className="px-4 py-2 text-[11px] font-medium text-white/70 uppercase tracking-wider">
+                WA Msgs
+              </th>
               {TICKET_METRICS.map(m => (
                 <th
                   key={m.key}
@@ -297,6 +311,8 @@ export default function Dashboard() {
               // Only show calls/chatbot from evening row (daily totals from midnight run)
               const dailyCalls = day.evening?.total_calls ?? null;
               const dailyChat = day.evening?.total_chatbot_chats ?? null;
+              const dailyEmails = day.evening?.total_emails ?? null;
+              const dailyWaMsgs = day.evening?.total_wa_messages ?? null;
               const missingMorning = !day.isFuture && !day.morning;
               const missingEvening = !day.isFuture && !day.evening;
 
@@ -343,6 +359,34 @@ export default function Dashboard() {
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyChat != null ? (
                       <span className="text-xl font-medium text-[#1C1C1E]">{dailyChat}</span>
+                    ) : (
+                      <MissingCell
+                        backfilling={backfilling === `${day.date}-18:00`}
+                        onBackfill={() => handleBackfill(day.date, '18:00')}
+                      />
+                    )}
+                  </td>
+
+                  {/* Emails */}
+                  <td className="px-4 py-2.5 tabular-nums">
+                    {day.isFuture ? (
+                      <span className="text-[#C7C7CC]">—</span>
+                    ) : dailyEmails != null ? (
+                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyEmails}</span>
+                    ) : (
+                      <MissingCell
+                        backfilling={backfilling === `${day.date}-18:00`}
+                        onBackfill={() => handleBackfill(day.date, '18:00')}
+                      />
+                    )}
+                  </td>
+
+                  {/* WA Messages */}
+                  <td className="px-4 py-2.5 tabular-nums">
+                    {day.isFuture ? (
+                      <span className="text-[#C7C7CC]">—</span>
+                    ) : dailyWaMsgs != null ? (
+                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyWaMsgs}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -412,7 +456,7 @@ export default function Dashboard() {
           {/* Summary */}
           <tfoot>
             <tr className="border-t border-[#E5E5EA]">
-              <td className="px-5 py-2.5 text-left" colSpan={3}>
+              <td className="px-5 py-2.5 text-left" colSpan={5}>
                 <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week totaal</span>
               </td>
               <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
@@ -420,6 +464,10 @@ export default function Dashboard() {
                   <span>Calls <strong className="text-[#1C1C1E] text-sm font-medium">{totalCalls}</strong></span>
                   <span className="text-[#E5E5EA]">|</span>
                   <span>Chatbot <strong className="text-[#1C1C1E] text-sm font-medium">{totalChat}</strong></span>
+                  <span className="text-[#E5E5EA]">|</span>
+                  <span>Emails <strong className="text-[#1C1C1E] text-sm font-medium">{totalEmails}</strong></span>
+                  <span className="text-[#E5E5EA]">|</span>
+                  <span>WA Msgs <strong className="text-[#1C1C1E] text-sm font-medium">{totalWaMsgs}</strong></span>
                   <span className="text-[#E5E5EA]">|</span>
                   <span>Gem. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
                 </div>

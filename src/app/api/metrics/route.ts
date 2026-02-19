@@ -11,6 +11,8 @@ const MetricsSchema = z.object({
   waiting_on_us: z.number().int().min(0).optional(),
   total_calls: z.number().int().min(0).optional(),
   total_chatbot_chats: z.number().int().min(0).optional(),
+  total_emails: z.number().int().min(0).optional(),
+  total_wa_messages: z.number().int().min(0).optional(),
 });
 
 export async function POST(request: Request) {
@@ -35,6 +37,7 @@ export async function POST(request: Request) {
   const optionalFields = [
     'unassigned_tickets', 'all_open_tickets', 'whatsapp_all_open',
     'whatsapp_waiting_on_us', 'waiting_on_us', 'total_calls', 'total_chatbot_chats',
+    'total_emails', 'total_wa_messages',
   ] as const;
 
   for (const field of optionalFields) {
