@@ -328,9 +328,9 @@ export default function Dashboard() {
                     )}
                   </td>
 
-                  {/* Calls */}
+                  {/* Calls — today shows dash (collected after midnight) */}
                   <td className="px-4 py-2.5 tabular-nums">
-                    {day.isFuture ? (
+                    {day.isFuture || day.isToday ? (
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyCalls != null ? (
                       <span className="text-xl font-medium text-[#1C1C1E]">{dailyCalls}</span>
@@ -344,7 +344,7 @@ export default function Dashboard() {
 
                   {/* Chatbot */}
                   <td className="px-4 py-2.5 tabular-nums">
-                    {day.isFuture ? (
+                    {day.isFuture || day.isToday ? (
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyChat != null ? (
                       <span className="text-xl font-medium text-[#1C1C1E]">{dailyChat}</span>
@@ -358,7 +358,7 @@ export default function Dashboard() {
 
                   {/* Emails */}
                   <td className="px-4 py-2.5 tabular-nums">
-                    {day.isFuture ? (
+                    {day.isFuture || day.isToday ? (
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyEmails != null ? (
                       <span className="text-xl font-medium text-[#1C1C1E]">{dailyEmails}</span>
@@ -372,7 +372,7 @@ export default function Dashboard() {
 
                   {/* WA Messages */}
                   <td className="px-4 py-2.5 tabular-nums border-r-2 border-[#E5E5EA]">
-                    {day.isFuture ? (
+                    {day.isFuture || day.isToday ? (
                       <span className="text-[#C7C7CC]">—</span>
                     ) : dailyWaMsgs != null ? (
                       <span className="text-xl font-medium text-[#1C1C1E]">{dailyWaMsgs}</span>

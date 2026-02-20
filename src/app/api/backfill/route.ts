@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     body: JSON.stringify({
       target_date: body.date,
       target_time: body.time_slot,
+      collect_mode: 'daily_totals',
     }),
   });
 
