@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, Fragment } from 'react';
 import { triggerBackfill } from '@/app/actions';
 import NavHeader from './NavHeader';
+import { useDataVersion } from '@/hooks/useDataVersion';
 
 // ============ Types ============
 
@@ -171,12 +172,13 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, [fetchData]);
 
+  useDataVersion(fetchData);
+
   const handleBackfill = async (date: string, timeSlot: string) => {
     const key = `${date}-${timeSlot}`;
     setBackfilling(key);
     try {
       await triggerBackfill(date, timeSlot);
-      setTimeout(() => fetchData(), 8000);
     } catch {
       console.error('Backfill failed');
     } finally {

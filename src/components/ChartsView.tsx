@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import NavHeader from './NavHeader';
+import { useDataVersion } from '@/hooks/useDataVersion';
 import AllOpenTrendChart from './charts/AllOpenTrendChart';
 import DailyVolumeChart from './charts/DailyVolumeChart';
 import DailyResolutionChart from './charts/DailyResolutionChart';
@@ -47,6 +48,8 @@ export default function ChartsView() {
     const timer = setInterval(fetchData, REFRESH_MS);
     return () => clearInterval(timer);
   }, [fetchData]);
+
+  useDataVersion(fetchData);
 
   const periodSelector = (
     <div className="flex gap-1">
