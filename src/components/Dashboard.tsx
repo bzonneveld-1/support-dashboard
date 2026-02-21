@@ -41,7 +41,7 @@ interface DayData {
 
 // ============ Constants ============
 
-const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const REFRESH_MS = 5 * 60 * 1000;
 
@@ -111,7 +111,7 @@ function buildWeekDays(weekStart: string, metrics: MetricsRow[]): DayData[] {
   const today = getTodayStr();
   const days: DayData[] = [];
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 7; i++) {
     const date = new Date(weekStart + 'T12:00:00Z');
     date.setUTCDate(date.getUTCDate() + i);
     const dateStr = date.toISOString().split('T')[0];
