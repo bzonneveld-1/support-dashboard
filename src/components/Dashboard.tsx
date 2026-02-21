@@ -315,7 +315,7 @@ export default function Dashboard() {
                     ${day.isToday ? 'bg-[#007AFF]/[0.03]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
                     ${day.isFuture ? 'opacity-20' : ''}
                   `}
-                  style={{ height: '20%' }}
+                  style={{ height: `${100 / 7}%` }}
                 >
                   {/* Day name */}
                   <td className="px-5 py-2.5 text-left relative border-r border-[#E5E5EA]">
