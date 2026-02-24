@@ -18,6 +18,7 @@
   --dash-alt: #FAFAFA;
   --dash-hover: #F0F0F2;
   --card-gap: 7.5rem;
+  --dash-split: var(--dash-border);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,7 +47,8 @@ html[data-tv] {
   --dash-today: #1C1C1E;
   --dash-alt: #242426;
   --dash-hover: #3A3A3C;
-  --card-gap: 70px;
+  --card-gap: 150px;
+  --dash-split: #ffffff;
 }
 
 html[data-tv] .nav-logo-dark { display: none !important; }
@@ -61,5 +63,8 @@ html[data-tv] .text-xl {
   line-height: 1.1 !important;
 }
 
-/* Compact fixed-px padding so everything fits with large font */
-html[data-tv] .dash-outer, html[data-tv] td, html[data-tv] th { padding: 10px !important; }
+/* Black frame around card */
+html[data-tv] .dash-outer { padding: 20px !important; }
+
+/* Compact cell padding so all rows + footer fit */
+html[data-tv] td, html[data-tv] th { padding: 8px !important; }
