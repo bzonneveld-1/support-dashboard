@@ -27,7 +27,12 @@
   }
 }
 
-/* Scale up all rem-based sizes for TV / large displays */
+/* Scale up all rem-based sizes for large displays / TV */
+@media (min-width: 1280px) {
+  :root {
+    font-size: 20px;
+  }
+}
 @media (min-width: 1600px) {
   :root {
     font-size: 24px;

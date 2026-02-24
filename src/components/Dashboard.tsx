@@ -255,7 +255,7 @@ export default function Dashboard() {
       />
 
       {/* Table card */}
-      <div className="flex-1 overflow-hidden min-h-0 bg-[var(--dash-surface)] rounded-2xl shadow-sm">
+      <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm" style={{ height: 'calc(100vh - 7.5rem)' }}>
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             {/* Row 1: Group labels */}
