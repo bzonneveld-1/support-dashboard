@@ -381,7 +381,7 @@ export default function Dashboard() {
               <tr className="bg-[#1D1D1F]">
                 {/* Daily Totals — rowSpan=2 */}
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Total Calls</th>
-                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Chatbot Chats</th>
+                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Chatbot Sent</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Emails Sent</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
                 {/* Ticket Snapshots — colSpan=2 each */}
