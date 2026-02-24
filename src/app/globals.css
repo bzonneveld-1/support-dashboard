@@ -35,9 +35,9 @@
 }
 
 /* ===== TV MODE ===== */
-/* Based on IMG_9710 (commit d41366e) which worked correctly on TV */
+/* 28px root for outer shell (nav, card, borders) — same as proven IMG_9710 */
 html[data-tv] {
-  font-size: 30px !important;
+  font-size: 28px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -52,11 +52,69 @@ html[data-tv] {
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
 
-/* Hide footer to free vertical space for all 7 days */
+/* Hide footer — free ~50px for Sunday */
 html[data-tv] tfoot { display: none !important; }
 
-/* Data numbers: 48px instead of 37.5px from root scaling */
+/* ===== TABLE INTERNALS — all px, immune to root font-size ===== */
+
+/* Fix Sunday cutoff: override 14.28% row height that causes table overflow */
+html[data-tv] tbody tr {
+  height: auto !important;
+}
+
+/* --- Header: compact to maximize body space --- */
+html[data-tv] thead th {
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+  padding-top: 6px !important;
+  padding-bottom: 4px !important;
+}
+
+/* 08/18 sub-headers: even more compact */
+html[data-tv] thead tr:last-child th {
+  font-size: 12px !important;
+  padding-top: 2px !important;
+  padding-bottom: 6px !important;
+}
+
+/* --- Body rows: compact padding, big text --- */
+html[data-tv] tbody td {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Data numbers: 64px — 71% bigger than 37.5px, readable from distance */
 html[data-tv] .text-xl {
-  font-size: 48px !important;
+  font-size: 64px !important;
   line-height: 1.15 !important;
+}
+
+/* Day names: 28px */
+html[data-tv] tbody td:first-child > span:first-of-type {
+  font-size: 28px !important;
+  line-height: 1.3 !important;
+}
+
+/* "today" label */
+html[data-tv] tbody td:first-child > span + span {
+  font-size: 12px !important;
+}
+
+/* Delta values (+3, -2): hidden — unreadable from TV distance, frees horizontal space */
+html[data-tv] .inline-flex > span:last-child:not(.text-xl) {
+  display: none !important;
+}
+
+/* --- Horizontal spacing: tight to fit 64px numbers in 15 columns --- */
+html[data-tv] thead th:first-child,
+html[data-tv] tbody td:first-child {
+  padding-left: 10px !important;
+  padding-right: 4px !important;
+  width: 150px !important;
+}
+
+html[data-tv] thead th:not(:first-child),
+html[data-tv] tbody td:not(:first-child) {
+  padding-left: 3px !important;
+  padding-right: 3px !important;
 }
