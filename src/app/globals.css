@@ -3,7 +3,6 @@
 :root {
   color-scheme: light dark;
 
-  /* Dashboard color tokens */
   --dash-bg: #F2F2F7;
   --dash-surface: #ffffff;
   --dash-text: #1C1C1E;
@@ -21,7 +20,7 @@
     --dash-text: #F5F5F7;
     --dash-border: #38383A;
     --dash-muted: #48484A;
-    --dash-today: #001A33;
+    --dash-today: #1C1C1E;
     --dash-alt: #2C2C2E;
     --dash-hover: #3A3A3C;
   }
@@ -29,17 +28,28 @@
   .nav-logo-white { display: block !important; }
 }
 
-/* TV mode: ?tv in URL sets data-tv on <html> */
+/* TV mode: ?tv in URL */
 html[data-tv] {
-  font-size: 28px !important;
+  font-size: 36px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
   --dash-border: #38383A;
   --dash-muted: #48484A;
-  --dash-today: #001A33;
-  --dash-alt: #2C2C2E;
+  --dash-today: #1C1C1E;
+  --dash-alt: #242426;
   --dash-hover: #3A3A3C;
 }
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
+
+/* Tighter cell spacing in TV mode to fit larger text */
+html[data-tv] table td:not(:first-child),
+html[data-tv] table th:not(:first-child) {
+  padding-left: 0.12rem !important;
+  padding-right: 0.12rem !important;
+}
+html[data-tv] table td:first-child {
+  padding-left: 0.4rem !important;
+  padding-right: 0.15rem !important;
+}
