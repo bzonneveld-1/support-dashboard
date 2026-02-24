@@ -29,8 +29,8 @@
 }
 
 /* ===== TV MODE ===== */
+/* NO root font-size override — keep 16px so padding/spacing stays compact */
 html[data-tv] {
-  font-size: 38px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -41,30 +41,59 @@ html[data-tv] {
   --dash-hover: #3A3A3C;
 }
 
-/* Hide full nav + footer — TV doesn't need them */
+/* Hide nav + footer */
 html[data-tv] .tv-hide { display: none !important; }
 html[data-tv] tfoot { display: none !important; }
 
-/* Black border around the card */
-html[data-tv] .dash-outer { padding: 0.35rem !important; }
-
-/* Table card fills remaining space with rounded corners */
+/* Card layout — all px to avoid any rem scaling issues */
+html[data-tv] .dash-outer { padding: 6px !important; }
 html[data-tv] .dash-outer > div:last-child {
-  height: calc(100vh - 0.7rem) !important;
-  border-radius: 0.5rem !important;
+  height: calc(100vh - 12px) !important;
+  border-radius: 8px !important;
 }
 
 /* White logo */
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
 
-/* Tighter horizontal padding so bigger text fits */
-html[data-tv] table td:not(:first-child),
-html[data-tv] table th:not(:first-child) {
-  padding-left: 0.08rem !important;
-  padding-right: 0.08rem !important;
+/* ===== TV TEXT SCALING ===== */
+/* Only scale font-size on text elements — padding/margins stay at 16px-based values */
+
+/* Data numbers (metric values) — big and readable from distance */
+html[data-tv] .text-xl {
+  font-size: 36px !important;
+  line-height: 1.2 !important;
 }
-html[data-tv] table td:first-child {
-  padding-left: 0.3rem !important;
-  padding-right: 0.08rem !important;
+
+/* Header cells */
+html[data-tv] thead th {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+/* Body cell base (dashes, inherited text) */
+html[data-tv] tbody td {
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+}
+
+/* Day name */
+html[data-tv] tbody td:first-child > span:first-of-type {
+  font-size: 24px !important;
+  line-height: 1.3 !important;
+}
+
+/* "today" label */
+html[data-tv] tbody td:first-child > span + span {
+  font-size: 12px !important;
+}
+
+/* Delta values (+3, -2) next to evening numbers */
+html[data-tv] .inline-flex > span:last-child:not(.text-xl) {
+  font-size: 14px !important;
+}
+
+/* Small text (fetching indicator) */
+html[data-tv] .text-xs {
+  font-size: 14px !important;
 }
