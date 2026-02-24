@@ -16,13 +16,21 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
     setIsTv(document.documentElement.hasAttribute('data-tv'));
   }, []);
 
+  // TV: minimal header — just the Bold logo centered
+  if (isTv) {
+    return (
+      <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '12px' }}>
+        <img src="/bold-logo-white.png" alt="Bold" style={{ height: '40px' }} className="w-auto" />
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
       <div className="flex items-center gap-4">
         <h1 className="text-sm font-semibold text-[var(--dash-text)] tracking-tight">
           Support Dashboard
         </h1>
-        {!isTv && (
         <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5">
           <Link
             href="/"
@@ -45,7 +53,6 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
             Charts
           </Link>
         </div>
-        )}
       </div>
       <div className="absolute left-1/2 -translate-x-1/2">
         <img src="/bold-logo.png" alt="Bold" className="nav-logo-dark h-[2rem] w-auto -mt-1" />

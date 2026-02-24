@@ -210,7 +210,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('tv')) {
       document.documentElement.setAttribute('data-tv', '');
-      document.documentElement.style.setProperty('--card-gap', '80px');
+      document.documentElement.style.setProperty('--card-gap', '132px');
       setIsTv(true);
     }
   }, []);
@@ -303,9 +303,8 @@ export default function Dashboard() {
 
   return (
     <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
-      {!isTv && (
       <NavHeader
-        rightContent={
+        rightContent={!isTv ? (
           <div className="flex items-center gap-3">
             <span className="text-xs text-[#8E8E93]">
               Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
@@ -333,9 +332,8 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-        }
+        ) : undefined}
       />
-      )}
 
       {/* Table card */}
       <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm flex flex-col" style={{ height: 'calc(100vh - var(--card-gap, 7.5rem))' }}>
