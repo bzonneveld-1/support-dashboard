@@ -38,7 +38,7 @@
 
 /* ===== TV MODE ===== */
 html[data-tv] {
-  font-size: 44px !important;
+  font-size: 48px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -47,7 +47,7 @@ html[data-tv] {
   --dash-today: #1C1C1E;
   --dash-alt: #242426;
   --dash-hover: #3A3A3C;
-  --card-gap: 180px;
+  --card-gap: 200px;
   --dash-split: #ffffff;
 }
 
@@ -67,4 +67,4 @@ html[data-tv] .text-xl {
 html[data-tv] .dash-outer { padding: 35px !important; }
 
 /* Compact cell padding so all rows + footer fit */
-html[data-tv] td, html[data-tv] th { padding: 6px !important; }
+html[data-tv] td, html[data-tv] th { padding: 4px !important; }
