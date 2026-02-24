@@ -18,6 +18,10 @@ export interface MetricsRow {
   total_chatbot_chats: number | null;
   total_emails: number | null;
   total_wa_messages: number | null;
+  revenue_mtd: number | null;
+  revenue_daily: number | null;
+  subscriptions_active: number | null;
+  subscriptions_new: number | null;
   collected_at: string;
   created_at: string;
 }

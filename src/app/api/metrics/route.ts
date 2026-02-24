@@ -5,7 +5,7 @@ const optionalMetric = z.union([z.number().int().min(0), z.null()]).optional();
 
 const MetricsSchema = z.object({
   metric_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  time_slot: z.enum(['08:00', '18:00']),
+  time_slot: z.enum(['08:00', '18:00', 'latest']),
   unassigned_tickets: optionalMetric,
   all_open_tickets: optionalMetric,
   whatsapp_all_open: optionalMetric,
@@ -15,6 +15,10 @@ const MetricsSchema = z.object({
   total_chatbot_chats: optionalMetric,
   total_emails: optionalMetric,
   total_wa_messages: optionalMetric,
+  revenue_mtd: optionalMetric,
+  revenue_daily: optionalMetric,
+  subscriptions_active: optionalMetric,
+  subscriptions_new: optionalMetric,
 });
 
 export async function POST(request: Request) {
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
     'unassigned_tickets', 'all_open_tickets', 'whatsapp_all_open',
     'whatsapp_waiting_on_us', 'waiting_on_us', 'total_calls', 'total_chatbot_chats',
     'total_emails', 'total_wa_messages',
+    'revenue_mtd', 'revenue_daily', 'subscriptions_active', 'subscriptions_new',
   ] as const;
 
   for (const field of optionalFields) {
