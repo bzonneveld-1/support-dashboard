@@ -264,7 +264,7 @@ export default function Dashboard() {
       </div>
 
       {/* Table card */}
-      <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm" style={{ height: 'calc(100vh - 7.5rem)' }}>
+      <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm" style={{ height: 'calc(100vh - var(--card-gap, 7.5rem))' }}>
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             {/* Row 1: Group labels */}

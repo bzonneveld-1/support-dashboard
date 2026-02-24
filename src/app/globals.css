@@ -17,6 +17,7 @@
   --dash-today: #F5F9FF;
   --dash-alt: #FAFAFA;
   --dash-hover: #F0F0F2;
+  --card-gap: 7.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,7 +37,7 @@
 
 /* ===== TV MODE ===== */
 html[data-tv] {
-  font-size: 38px !important;
+  font-size: 42px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -45,17 +46,20 @@ html[data-tv] {
   --dash-today: #1C1C1E;
   --dash-alt: #242426;
   --dash-hover: #3A3A3C;
+  --card-gap: 70px;
 }
 
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
-html[data-tv] tfoot { display: none !important; }
 
 /* Fix Sunday: override 14.28% row height with auto */
 html[data-tv] tbody tr { height: auto !important; }
 
 /* Bigger data numbers */
 html[data-tv] .text-xl {
-  font-size: 72px !important;
+  font-size: 80px !important;
   line-height: 1.1 !important;
 }
+
+/* Compact fixed-px padding so everything fits with large font */
+html[data-tv] .dash-outer, html[data-tv] td, html[data-tv] th { padding: 10px !important; }
