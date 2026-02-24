@@ -212,7 +212,7 @@ export default function Dashboard() {
 
   if (loading && !data) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#F2F2F7]">
+      <div className="h-screen flex items-center justify-center bg-[var(--dash-bg)]">
         <div className="text-lg text-[#8E8E93] animate-pulse">Loading...</div>
       </div>
     );
@@ -221,7 +221,7 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[#F2F2F7]">
+    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
       <NavHeader
         rightContent={
           <div className="flex items-center gap-3">
@@ -231,21 +231,21 @@ export default function Dashboard() {
             <div className="flex gap-1">
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-                className="w-7 h-7 rounded-md hover:bg-[#F0F0F2] flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+                className="w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs"
               >
                 &#9664;
               </button>
               {!isCurrentWeek && (
                 <button
                   onClick={() => setWeekParam('current')}
-                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[11px] font-medium hover:bg-[#0071E3] transition-colors"
+                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[0.6875rem] font-medium hover:bg-[#0071E3] transition-colors"
                 >
                   Today
                 </button>
               )}
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-                className="w-7 h-7 rounded-md hover:bg-[#F0F0F2] flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+                className="w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs"
               >
                 &#9654;
               </button>
@@ -255,32 +255,32 @@ export default function Dashboard() {
       />
 
       {/* Table card */}
-      <div className="flex-1 overflow-hidden min-h-0 bg-white rounded-2xl shadow-sm">
+      <div className="flex-1 overflow-hidden min-h-0 bg-[var(--dash-surface)] rounded-2xl shadow-sm">
         <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             {/* Row 1: Group labels */}
             <tr className="bg-[#1D1D1F]">
-              <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider w-[120px] border-r border-[#343436]">
+              <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider w-[7.5rem] border-r border-[#343436]">
                 Day
               </th>
-              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em] border-r border-[#343436]">
+              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em] border-r border-[#343436]">
                 Daily Totals
               </th>
-              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
+              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
                 Ticket Snapshots
               </th>
             </tr>
             {/* Row 2: Column names */}
             <tr className="bg-[#1D1D1F]">
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Calls</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">WA Msgs</th>
+              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Calls</th>
+              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot</th>
+              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails</th>
+              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">WA Msgs</th>
               {TICKET_METRICS.map((m, i) => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className={`px-3 py-1 text-[11px] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
+                  className={`px-3 py-1 text-[0.6875rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
                 >
                   {m.label}
                 </th>
@@ -290,10 +290,10 @@ export default function Dashboard() {
             <tr className="bg-[#1D1D1F]">
               {TICKET_METRICS.map((m, i) => (
                 <Fragment key={m.key}>
-                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
+                  <th className={`px-2 pb-1.5 text-[0.625rem] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
                     08
                   </th>
-                  <th className="px-2 pb-1.5 text-[10px] font-medium text-[#9D9DA0]">
+                  <th className="px-2 pb-1.5 text-[0.625rem] font-medium text-[#9D9DA0]">
                     18
                   </th>
                 </Fragment>
@@ -311,31 +311,31 @@ export default function Dashboard() {
                 <tr
                   key={day.date}
                   className={`
-                    border-b border-[#E5E5EA] transition-colors
-                    ${day.isToday ? 'bg-[#F5F9FF]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
+                    border-b border-[var(--dash-border)] transition-colors
+                    ${day.isToday ? 'bg-[var(--dash-today)]' : dayIdx % 2 === 1 ? 'bg-[var(--dash-alt)]' : ''}
                     ${day.isFuture ? 'opacity-20' : ''}
                   `}
                   style={{ height: `${100 / 7}%` }}
                 >
                   {/* Day name */}
-                  <td className="px-5 py-2.5 text-left relative border-r border-[#E5E5EA]">
+                  <td className="px-5 py-2.5 text-left relative border-r border-[var(--dash-border)]">
                     {day.isToday && (
                       <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-[#007AFF]" />
                     )}
-                    <span className={`text-[13px] font-medium ${day.isToday ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>
+                    <span className={`text-[0.8125rem] font-medium ${day.isToday ? 'text-[#007AFF]' : 'text-[var(--dash-text)]'}`}>
                       {day.dayName}
                     </span>
                     {day.isToday && (
-                      <span className="ml-1.5 text-[9px] font-medium text-[#66ADFF] uppercase tracking-widest">today</span>
+                      <span className="ml-1.5 text-[0.5625rem] font-medium text-[#66ADFF] uppercase tracking-widest">today</span>
                     )}
                   </td>
 
                   {/* Calls — today shows dash (collected after midnight) */}
                   <td className="px-4 py-2.5 tabular-nums">
                     {day.isFuture || day.isToday ? (
-                      <span className="text-[#C7C7CC]">—</span>
+                      <span className="text-[var(--dash-muted)]">—</span>
                     ) : dailyCalls != null ? (
-                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyCalls}</span>
+                      <span className="text-xl font-medium text-[var(--dash-text)]">{dailyCalls}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -347,9 +347,9 @@ export default function Dashboard() {
                   {/* Chatbot */}
                   <td className="px-4 py-2.5 tabular-nums">
                     {day.isFuture || day.isToday ? (
-                      <span className="text-[#C7C7CC]">—</span>
+                      <span className="text-[var(--dash-muted)]">—</span>
                     ) : dailyChat != null ? (
-                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyChat}</span>
+                      <span className="text-xl font-medium text-[var(--dash-text)]">{dailyChat}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -361,9 +361,9 @@ export default function Dashboard() {
                   {/* Emails */}
                   <td className="px-4 py-2.5 tabular-nums">
                     {day.isFuture || day.isToday ? (
-                      <span className="text-[#C7C7CC]">—</span>
+                      <span className="text-[var(--dash-muted)]">—</span>
                     ) : dailyEmails != null ? (
-                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyEmails}</span>
+                      <span className="text-xl font-medium text-[var(--dash-text)]">{dailyEmails}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -373,11 +373,11 @@ export default function Dashboard() {
                   </td>
 
                   {/* WA Messages */}
-                  <td className="px-4 py-2.5 tabular-nums border-r-2 border-[#E5E5EA]">
+                  <td className="px-4 py-2.5 tabular-nums border-r-2 border-[var(--dash-border)]">
                     {day.isFuture || day.isToday ? (
-                      <span className="text-[#C7C7CC]">—</span>
+                      <span className="text-[var(--dash-muted)]">—</span>
                     ) : dailyWaMsgs != null ? (
-                      <span className="text-xl font-medium text-[#1C1C1E]">{dailyWaMsgs}</span>
+                      <span className="text-xl font-medium text-[var(--dash-text)]">{dailyWaMsgs}</span>
                     ) : (
                       <MissingCell
                         backfilling={backfilling === `${day.date}-18:00`}
@@ -397,33 +397,33 @@ export default function Dashboard() {
                     return (
                       <Fragment key={metric.key}>
                         {/* 08:00 — ticket snapshots can't be backfilled */}
-                        <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3 border-l border-[#F2F2F7]'}`}>
+                        <td className={`py-2.5 tabular-nums ${isFirstGroup ? 'pl-5 pr-3' : 'px-3 border-l border-[var(--dash-bg)]'}`}>
                           {day.isFuture ? (
-                            <span className="text-[#C7C7CC]">—</span>
+                            <span className="text-[var(--dash-muted)]">—</span>
                           ) : morningVal != null ? (
-                            <span className="text-xl font-medium text-[#1C1C1E]">{morningVal}</span>
+                            <span className="text-xl font-medium text-[var(--dash-text)]">{morningVal}</span>
                           ) : (
-                            <span className="text-[#C7C7CC]">—</span>
+                            <span className="text-[var(--dash-muted)]">—</span>
                           )}
                         </td>
 
                         {/* 18:00 */}
                         <td className="px-3 py-2.5 tabular-nums">
                           {day.isFuture ? (
-                            <span className="text-[#C7C7CC]">—</span>
+                            <span className="text-[var(--dash-muted)]">—</span>
                           ) : eveningVal != null ? (
                             <span className="inline-flex items-baseline gap-1">
-                              <span className={`text-xl font-medium ${deltaColor || 'text-[#1C1C1E]'}`}>
+                              <span className={`text-xl font-medium ${deltaColor || 'text-[var(--dash-text)]'}`}>
                                 {eveningVal}
                               </span>
                               {delta && (
-                                <span className={`text-[10px] font-medium ${deltaColor}`}>
+                                <span className={`text-[0.625rem] font-medium ${deltaColor}`}>
                                   {delta}
                                 </span>
                               )}
                             </span>
                           ) : (
-                            <span className="text-[#C7C7CC]">—</span>
+                            <span className="text-[var(--dash-muted)]">—</span>
                           )}
                         </td>
                       </Fragment>
@@ -436,24 +436,24 @@ export default function Dashboard() {
 
           {/* Summary */}
           <tfoot>
-            <tr className="border-t-2 border-[#E5E5EA]">
-              <td className="px-5 py-2.5 text-left border-r border-[#E5E5EA]">
-                <span className="text-[11px] font-medium text-[#8E8E93] uppercase tracking-wider">Week Total</span>
+            <tr className="border-t-2 border-[var(--dash-border)]">
+              <td className="px-5 py-2.5 text-left border-r border-[var(--dash-border)]">
+                <span className="text-[0.6875rem] font-medium text-[#8E8E93] uppercase tracking-wider">Week Total</span>
               </td>
-              <td className="py-2.5 text-[#8E8E93] text-xs border-r-2 border-[#E5E5EA]" colSpan={4}>
+              <td className="py-2.5 text-[#8E8E93] text-xs border-r-2 border-[var(--dash-border)]" colSpan={4}>
                 <div className="flex items-center justify-center gap-4">
-                  <span>Calls <strong className="text-[#1C1C1E] text-sm font-medium">{totalCalls}</strong></span>
-                  <span className="text-[#E5E5EA]">|</span>
-                  <span>Chatbot <strong className="text-[#1C1C1E] text-sm font-medium">{totalChat}</strong></span>
-                  <span className="text-[#E5E5EA]">|</span>
-                  <span>Emails <strong className="text-[#1C1C1E] text-sm font-medium">{totalEmails}</strong></span>
-                  <span className="text-[#E5E5EA]">|</span>
-                  <span>WA Msgs <strong className="text-[#1C1C1E] text-sm font-medium">{totalWaMsgs}</strong></span>
+                  <span>Calls <strong className="text-[var(--dash-text)] text-sm font-medium">{totalCalls}</strong></span>
+                  <span className="text-[var(--dash-border)]">|</span>
+                  <span>Chatbot <strong className="text-[var(--dash-text)] text-sm font-medium">{totalChat}</strong></span>
+                  <span className="text-[var(--dash-border)]">|</span>
+                  <span>Emails <strong className="text-[var(--dash-text)] text-sm font-medium">{totalEmails}</strong></span>
+                  <span className="text-[var(--dash-border)]">|</span>
+                  <span>WA Msgs <strong className="text-[var(--dash-text)] text-sm font-medium">{totalWaMsgs}</strong></span>
                 </div>
               </td>
               <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={10}>
                 <div className="flex items-center justify-center">
-                  <span>Avg. All Open <strong className="text-[#1C1C1E] text-sm font-medium">{avgOpen}</strong></span>
+                  <span>Avg. All Open <strong className="text-[var(--dash-text)] text-sm font-medium">{avgOpen}</strong></span>
                 </div>
               </td>
             </tr>
@@ -477,7 +477,7 @@ function MissingCell({ backfilling, onBackfill }: { backfilling: boolean; onBack
       {backfilling ? (
         <span className="text-[#FF9500] animate-pulse text-xs">fetching...</span>
       ) : (
-        <span className="text-[#C7C7CC]">—</span>
+        <span className="text-[var(--dash-muted)]">—</span>
       )}
     </button>
   );

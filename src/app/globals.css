@@ -1,1 +1,35 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+
+  /* Dashboard color tokens */
+  --dash-bg: #F2F2F7;
+  --dash-surface: #ffffff;
+  --dash-text: #1C1C1E;
+  --dash-border: #E5E5EA;
+  --dash-muted: #C7C7CC;
+  --dash-today: #F5F9FF;
+  --dash-alt: #FAFAFA;
+  --dash-hover: #F0F0F2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dash-bg: #000000;
+    --dash-surface: #1C1C1E;
+    --dash-text: #F5F5F7;
+    --dash-border: #38383A;
+    --dash-muted: #48484A;
+    --dash-today: #001A33;
+    --dash-alt: #2C2C2E;
+    --dash-hover: #3A3A3C;
+  }
+}
+
+/* Scale up all rem-based sizes for TV / large displays */
+@media (min-width: 1600px) {
+  :root {
+    font-size: 24px;
+  }
+}

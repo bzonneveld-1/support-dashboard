@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface NavHeaderProps {
   rightContent?: React.ReactNode;
@@ -14,26 +13,26 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
   return (
     <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
       <div className="flex items-center gap-4">
-        <h1 className="text-sm font-semibold text-[#1C1C1E] tracking-tight">
+        <h1 className="text-sm font-semibold text-[var(--dash-text)] tracking-tight">
           Support Dashboard
         </h1>
-        <div className="flex bg-[#E5E5EA] rounded-lg p-0.5">
+        <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5">
           <Link
             href="/"
-            className={`px-3 py-1 text-[11px] font-medium rounded-md transition-colors ${
+            className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
               pathname === '/'
-                ? 'bg-white text-[#1C1C1E] shadow-sm'
-                : 'text-[#8E8E93] hover:text-[#1C1C1E]'
+                ? 'bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-sm'
+                : 'text-[#8E8E93] hover:text-[var(--dash-text)]'
             }`}
           >
             Table
           </Link>
           <Link
             href="/charts"
-            className={`px-3 py-1 text-[11px] font-medium rounded-md transition-colors ${
+            className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
               pathname === '/charts'
-                ? 'bg-white text-[#1C1C1E] shadow-sm'
-                : 'text-[#8E8E93] hover:text-[#1C1C1E]'
+                ? 'bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-sm'
+                : 'text-[#8E8E93] hover:text-[var(--dash-text)]'
             }`}
           >
             Charts
@@ -41,14 +40,10 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
         </div>
       </div>
       <div className="absolute left-1/2 -translate-x-1/2">
-        <Image
-          src="/bold-logo.png"
-          alt="Bold"
-          width={80}
-          height={31}
-          className="h-8 w-auto -mt-1"
-          priority
-        />
+        <picture>
+          <source srcSet="/bold-logo-white.png" media="(prefers-color-scheme: dark)" />
+          <img src="/bold-logo.png" alt="Bold" className="h-[2rem] w-auto -mt-1" />
+        </picture>
       </div>
       <div className="flex items-center gap-3">
         {rightContent}
