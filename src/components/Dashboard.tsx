@@ -333,11 +333,26 @@ export default function Dashboard() {
       {/* Table card */}
       <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm flex flex-col" style={{ height: 'calc(100vh - var(--card-gap, 7.5rem))' }}>
         <div className="flex-1 min-h-0">
-          <table className="w-full h-full border-collapse text-center">
+          <table className="w-full h-full border-collapse text-center" style={{ tableLayout: 'fixed' }}>
+            <colgroup>
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7.25%' }} />
+              <col style={{ width: '7.25%' }} />
+              <col style={{ width: '7.25%' }} />
+              <col style={{ width: '7.25%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '9%' }} />
+            </colgroup>
             <thead className="sticky top-0 z-10">
               {/* Row 1: Group labels — 1 + 4 + 4 + 4 = 13 columns */}
               <tr className="bg-[#1D1D1F]">
-                <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider w-[7.5rem] border-r border-[#343436]">
+                <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">
                   Day
                 </th>
                 <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
