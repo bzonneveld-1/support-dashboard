@@ -359,52 +359,52 @@ export default function Dashboard() {
             <thead className="sticky top-0 z-10">
               {/* Row 1: Group labels — 1 + 4 + 4 + 4 = 13 columns */}
               <tr className="bg-[#1D1D1F]">
-                <th rowSpan={3} className="px-5 py-2 text-left text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">
+                <th rowSpan={3} className="px-5 py-2 text-left text-[0.625rem] font-medium text-white uppercase tracking-wider border-r border-[#343436]">
                   Day
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.625rem] font-semibold text-white uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Daily Totals
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.625rem] font-semibold text-white uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Ticket Snapshots
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.625rem] font-semibold text-white uppercase tracking-[0.12em]">
                   Webshop
                 </th>
               </tr>
               {/* Row 2: Column names */}
               <tr className="bg-[#1D1D1F]">
                 {/* Daily Totals — rowSpan=2 */}
-                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Total Calls</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot Chats</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails Sent</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Total Calls</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Chatbot Chats</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Emails Sent</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
                 {/* Ticket Snapshots — colSpan=2 each */}
                 {TICKET_METRICS.map((m, i) => (
                   <th
                     key={m.key}
                     colSpan={2}
-                    className={`px-3 py-1 text-[0.5625rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
+                    className={`px-3 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
                     style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                   >
                     {m.label}
                   </th>
                 ))}
                 {/* Webshop — rowSpan=2 */}
-                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Month Rev.</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Rev Daily</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs Active</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs New</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Month Rev.</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Rev Daily</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Subs Active</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.625rem] font-medium text-white uppercase tracking-wider">Subs New</th>
               </tr>
               {/* Row 3: 08/18 sub-headers for ticket metrics only */}
               <tr className="bg-[#1D1D1F]">
                 {TICKET_METRICS.map((m, i) => (
                   <Fragment key={m.key}>
-                    <th className={`px-2 pb-1.5 text-[0.5rem] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
+                    <th className={`px-2 pb-1.5 text-[0.5rem] font-medium text-white/70 ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
                       08
                     </th>
                     <th
-                      className="px-2 pb-1.5 text-[0.5rem] font-medium text-[#9D9DA0]"
+                      className="px-2 pb-1.5 text-[0.5rem] font-medium text-white/70"
                       style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                     >
                       18
