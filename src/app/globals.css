@@ -36,7 +36,7 @@
 
 /* ===== TV MODE ===== */
 html[data-tv] {
-  font-size: 30px !important;
+  font-size: 38px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -56,6 +56,6 @@ html[data-tv] tbody tr { height: auto !important; }
 
 /* Bigger data numbers */
 html[data-tv] .text-xl {
-  font-size: 48px !important;
-  line-height: 1.15 !important;
+  font-size: 72px !important;
+  line-height: 1.1 !important;
 }
