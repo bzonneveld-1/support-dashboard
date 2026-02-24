@@ -272,7 +272,7 @@ export default function Dashboard() {
               <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider w-[7.5rem] border-r border-[#343436]">
                 Day
               </th>
-              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em] border-r-[3px] border-r-[var(--dash-split)]">
+              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: '3px solid var(--dash-split)' }}>
                 Daily Totals
               </th>
               <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
@@ -284,7 +284,7 @@ export default function Dashboard() {
               <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Calls</th>
               <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot</th>
               <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails</th>
-              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r-[3px] border-r-[var(--dash-split)]">WA Msgs</th>
+              <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: '3px solid var(--dash-split)' }}>WA Msgs</th>
               {TICKET_METRICS.map((m, i) => (
                 <th
                   key={m.key}
@@ -382,7 +382,7 @@ export default function Dashboard() {
                   </td>
 
                   {/* WA Messages */}
-                  <td className="px-4 py-2.5 tabular-nums border-r-[3px] border-r-[var(--dash-split)]">
+                  <td className="px-4 py-2.5 tabular-nums" style={{ borderRight: '3px solid var(--dash-split)' }}>
                     {day.isFuture || day.isToday ? (
                       <span className="text-[var(--dash-muted)]">—</span>
                     ) : dailyWaMsgs != null ? (
@@ -449,7 +449,7 @@ export default function Dashboard() {
               <td className="px-5 py-2.5 text-left border-r border-[var(--dash-border)]">
                 <span className="text-[0.6875rem] font-medium text-[#8E8E93] uppercase tracking-wider">Week Total</span>
               </td>
-              <td className="py-2.5 text-[#8E8E93] text-xs border-r-[3px] border-r-[var(--dash-split)]" colSpan={4}>
+              <td className="py-2.5 text-[#8E8E93] text-xs" colSpan={4} style={{ borderRight: '3px solid var(--dash-split)' }}>
                 <div className="flex items-center justify-center gap-4">
                   <span>Calls <strong className="text-[var(--dash-text)] text-sm font-medium">{totalCalls}</strong></span>
                   <span className="text-[var(--dash-border)]">|</span>
