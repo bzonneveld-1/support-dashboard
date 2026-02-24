@@ -276,12 +276,17 @@ export default function Dashboard() {
   const newSubsValues = days.map(d => getWebshopValue(d, 'subscriptions_new')).filter((v): v is number => v != null);
   const avgNewSubs = avgOf(newSubsValues);
 
-  // Last updated timestamp (from today's latest row)
+  // Last updated timestamp — always CET/CEST (not browser timezone)
   const todayDay = days.find(d => d.isToday);
   let lastUpdatedTime: string | null = null;
   if (todayDay?.latest?.collected_at) {
     const d = new Date(todayDay.latest.collected_at);
-    lastUpdatedTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const y = d.getUTCFullYear();
+    const dstStart = new Date(Date.UTC(y, 2, 31 - new Date(Date.UTC(y, 2, 31)).getUTCDay(), 1));
+    const dstEnd = new Date(Date.UTC(y, 9, 31 - new Date(Date.UTC(y, 9, 31)).getUTCDay(), 1));
+    const cetOffset = (d >= dstStart && d < dstEnd) ? 2 : 1;
+    const h = (d.getUTCHours() + cetOffset) % 24;
+    lastUpdatedTime = `${String(h).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
   }
 
   if (loading && !data) {
@@ -313,7 +318,7 @@ export default function Dashboard() {
               {!isCurrentWeek && (
                 <button
                   onClick={() => setWeekParam('current')}
-                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[0.6875rem] font-medium hover:bg-[#0071E3] transition-colors"
+                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[0.5625rem] font-medium hover:bg-[#0071E3] transition-colors"
                 >
                   Today
                 </button>
@@ -352,52 +357,52 @@ export default function Dashboard() {
             <thead className="sticky top-0 z-10">
               {/* Row 1: Group labels — 1 + 4 + 4 + 4 = 13 columns */}
               <tr className="bg-[#1D1D1F]">
-                <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">
+                <th rowSpan={3} className="px-5 py-2 text-left text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">
                   Day
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Daily Totals
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Ticket Snapshots
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.5625rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
                   Webshop
                 </th>
               </tr>
               {/* Row 2: Column names */}
               <tr className="bg-[#1D1D1F]">
                 {/* Daily Totals — rowSpan=2 */}
-                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Total Calls</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot Chats</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails Sent</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Total Calls</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot Chats</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails Sent</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
                 {/* Ticket Snapshots — colSpan=2 each */}
                 {TICKET_METRICS.map((m, i) => (
                   <th
                     key={m.key}
                     colSpan={2}
-                    className={`px-3 py-1 text-[0.6875rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
+                    className={`px-3 py-1 text-[0.5625rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
                     style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                   >
                     {m.label}
                   </th>
                 ))}
                 {/* Webshop — rowSpan=2 */}
-                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Month Rev.</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Rev Daily</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs Active</th>
-                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs New</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Month Rev.</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Rev Daily</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs Active</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.5625rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs New</th>
               </tr>
               {/* Row 3: 08/18 sub-headers for ticket metrics only */}
               <tr className="bg-[#1D1D1F]">
                 {TICKET_METRICS.map((m, i) => (
                   <Fragment key={m.key}>
-                    <th className={`px-2 pb-1.5 text-[0.625rem] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
+                    <th className={`px-2 pb-1.5 text-[0.5rem] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
                       08
                     </th>
                     <th
-                      className="px-2 pb-1.5 text-[0.625rem] font-medium text-[#9D9DA0]"
+                      className="px-2 pb-1.5 text-[0.5rem] font-medium text-[#9D9DA0]"
                       style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                     >
                       18
@@ -551,7 +556,7 @@ export default function Dashboard() {
               <tr className="border-t-2 border-[var(--dash-border)]">
                 {/* Day */}
                 <td className="px-5 py-2.5 text-left border-r border-[var(--dash-border)]">
-                  <span className="text-[0.6875rem] font-medium text-[#8E8E93] uppercase tracking-wider">Summary</span>
+                  <span className="text-[0.5625rem] font-medium text-[#8E8E93] uppercase tracking-wider">Summary</span>
                 </td>
 
                 {/* Daily Totals: sums */}
@@ -578,7 +583,7 @@ export default function Dashboard() {
 
         {/* Last updated timestamp */}
         {lastUpdatedTime && (
-          <div className="text-center py-1.5 text-[0.625rem] text-[#8E8E93] flex-shrink-0">
+          <div className="text-center py-1.5 text-[0.5rem] text-[#8E8E93] flex-shrink-0">
             Last updated: {lastUpdatedTime}
           </div>
         )}
