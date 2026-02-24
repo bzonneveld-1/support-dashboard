@@ -183,6 +183,7 @@ export default function Dashboard() {
   const [data, setData] = useState<WeekData | null>(null);
   const [loading, setLoading] = useState(true);
   const [backfilling, setBackfilling] = useState<string | null>(null);
+  const [isTv, setIsTv] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -209,6 +210,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('tv')) {
       document.documentElement.setAttribute('data-tv', '');
+      setIsTv(true);
     }
   }, []);
 
@@ -301,7 +303,7 @@ export default function Dashboard() {
 
   return (
     <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
-      <div className="tv-hide">
+      {!isTv && (
       <NavHeader
         rightContent={
           <div className="flex items-center gap-3">
@@ -333,7 +335,7 @@ export default function Dashboard() {
           </div>
         }
       />
-      </div>
+      )}
 
       {/* Table card */}
       <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm flex flex-col" style={{ height: 'calc(100vh - var(--card-gap, 7.5rem))' }}>
