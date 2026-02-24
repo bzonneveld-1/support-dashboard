@@ -335,11 +335,11 @@ export default function Dashboard() {
         <div className="flex-1 min-h-0">
           <table className="w-full h-full border-collapse text-center" style={{ tableLayout: 'fixed' }}>
             <colgroup>
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '6.5%' }} />
+              <col style={{ width: '6.5%' }} />
+              <col style={{ width: '6.5%' }} />
+              <col style={{ width: '6.5%' }} />
               <col style={{ width: '7%' }} />
               <col style={{ width: '7%' }} />
               <col style={{ width: '7%' }} />
