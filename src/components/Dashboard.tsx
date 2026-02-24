@@ -231,7 +231,7 @@ export default function Dashboard() {
             <div className="flex gap-1">
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-                className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+                className="w-7 h-7 rounded-md hover:bg-[#F0F0F2] flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
               >
                 &#9664;
               </button>
@@ -245,7 +245,7 @@ export default function Dashboard() {
               )}
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-                className="w-7 h-7 rounded-md hover:bg-white/80 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
+                className="w-7 h-7 rounded-md hover:bg-[#F0F0F2] flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] transition-colors text-xs"
               >
                 &#9654;
               </button>
@@ -255,32 +255,32 @@ export default function Dashboard() {
       />
 
       {/* Table card */}
-      <div className="flex-1 overflow-auto min-h-0 bg-white rounded-2xl shadow-sm">
-        <table className="w-full h-full border-collapse text-center">
+      <div className="flex-1 overflow-hidden min-h-0 bg-white rounded-2xl shadow-sm">
+        <table className="w-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             {/* Row 1: Group labels */}
             <tr className="bg-[#1D1D1F]">
-              <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-white/70 uppercase tracking-wider w-[120px] border-r border-white/10">
+              <th rowSpan={3} className="px-5 py-2 text-left text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider w-[120px] border-r border-[#343436]">
                 Day
               </th>
-              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/70 uppercase tracking-[0.12em] border-r border-white/10">
+              <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em] border-r border-[#343436]">
                 Daily Totals
               </th>
-              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-white/70 uppercase tracking-[0.12em]">
+              <th colSpan={10} className="px-4 pt-2.5 pb-0.5 text-[11px] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
                 Ticket Snapshots
               </th>
             </tr>
             {/* Row 2: Column names */}
             <tr className="bg-[#1D1D1F]">
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Calls</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Chatbot</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider">Emails</th>
-              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-white/70 uppercase tracking-wider border-r border-white/10">WA Msgs</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Calls</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails</th>
+              <th rowSpan={2} className="px-4 py-1 text-[11px] font-medium text-[#B3B3B5] uppercase tracking-wider border-r border-[#343436]">WA Msgs</th>
               {TICKET_METRICS.map((m, i) => (
                 <th
                   key={m.key}
                   colSpan={2}
-                  className={`px-3 py-1 text-[11px] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}
+                  className={`px-3 py-1 text-[11px] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
                 >
                   {m.label}
                 </th>
@@ -290,10 +290,10 @@ export default function Dashboard() {
             <tr className="bg-[#1D1D1F]">
               {TICKET_METRICS.map((m, i) => (
                 <Fragment key={m.key}>
-                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-white/60 ${i > 0 ? 'border-l border-white/[0.06]' : ''}`}>
+                  <th className={`px-2 pb-1.5 text-[10px] font-medium text-[#9D9DA0] ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
                     08
                   </th>
-                  <th className="px-2 pb-1.5 text-[10px] font-medium text-white/60">
+                  <th className="px-2 pb-1.5 text-[10px] font-medium text-[#9D9DA0]">
                     18
                   </th>
                 </Fragment>
@@ -312,10 +312,9 @@ export default function Dashboard() {
                   key={day.date}
                   className={`
                     border-b border-[#E5E5EA] transition-colors
-                    ${day.isToday ? 'bg-[#007AFF]/[0.03]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
+                    ${day.isToday ? 'bg-[#F5F9FF]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
                     ${day.isFuture ? 'opacity-20' : ''}
                   `}
-                  style={{ height: `${100 / 7}%` }}
                 >
                   {/* Day name */}
                   <td className="px-5 py-2.5 text-left relative border-r border-[#E5E5EA]">
@@ -326,7 +325,7 @@ export default function Dashboard() {
                       {day.dayName}
                     </span>
                     {day.isToday && (
-                      <span className="ml-1.5 text-[9px] font-medium text-[#007AFF]/60 uppercase tracking-widest">today</span>
+                      <span className="ml-1.5 text-[9px] font-medium text-[#66ADFF] uppercase tracking-widest">today</span>
                     )}
                   </td>
 
