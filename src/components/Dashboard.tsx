@@ -243,20 +243,18 @@ export default function Dashboard() {
   const avgAllOpen08 = avgOf(days.map(d => d.morning?.all_open_tickets).filter((v): v is number => v != null));
   const avgAllOpen18 = avgOf(days.map(d => d.evening?.all_open_tickets).filter((v): v is number => v != null));
 
-  // Footer: Revenue MTD growth (with month boundary detection)
-  const daysWithMtd = days.filter(d => getWebshopValue(d, 'revenue_mtd') != null);
+  // Footer: Revenue week growth = SUM(Rev Daily) — includes all days (Monday too)
+  const daysWithRevDaily = days.filter(d => getWebshopValue(d, 'revenue_daily') != null);
   const mondayMonth = days[0] ? new Date(days[0].date + 'T12:00:00Z').getUTCMonth() : null;
-  const lastMtdDay = daysWithMtd[daysWithMtd.length - 1];
-  const lastMtdMonth = lastMtdDay ? new Date(lastMtdDay.date + 'T12:00:00Z').getUTCMonth() : null;
-  const crossesMonthBoundary = mondayMonth !== null && lastMtdMonth !== null && mondayMonth !== lastMtdMonth;
+  const lastRevDay = daysWithRevDaily[daysWithRevDaily.length - 1];
+  const lastRevMonth = lastRevDay ? new Date(lastRevDay.date + 'T12:00:00Z').getUTCMonth() : null;
+  const crossesMonthBoundary = mondayMonth !== null && lastRevMonth !== null && mondayMonth !== lastRevMonth;
 
   let revMtdGrowthStr = '—';
-  if (!crossesMonthBoundary && daysWithMtd.length >= 2) {
-    const firstMtd = getWebshopValue(daysWithMtd[0], 'revenue_mtd')!;
-    const lastMtd = getWebshopValue(lastMtdDay, 'revenue_mtd')!;
-    const diffCents = lastMtd - firstMtd;
-    const diffEuros = Math.round(diffCents / 100);
-    revMtdGrowthStr = (diffEuros >= 0 ? '+€' : '-€') + fmtEuros(diffEuros);
+  if (!crossesMonthBoundary && daysWithRevDaily.length >= 1) {
+    const sumCents = daysWithRevDaily.reduce((sum, d) => sum + (getWebshopValue(d, 'revenue_daily') ?? 0), 0);
+    const sumEuros = Math.round(sumCents / 100);
+    revMtdGrowthStr = (sumEuros >= 0 ? '+€' : '-€') + fmtEuros(sumEuros);
   }
 
   // Footer: Average daily revenue
@@ -265,18 +263,15 @@ export default function Dashboard() {
     ? formatCurrency(Math.round(dailyRevValues.reduce((a, b) => a + b, 0) / dailyRevValues.length))
     : '—';
 
-  // Footer: Subs Active growth
-  const daysWithSubs = days.filter(d => getWebshopValue(d, 'subscriptions_active') != null);
+  // Footer: Subs week growth = SUM(Subs New) — includes all days (Monday too)
+  const newSubsValues = days.map(d => getWebshopValue(d, 'subscriptions_new')).filter((v): v is number => v != null);
   let subsGrowthStr = '—';
-  if (daysWithSubs.length >= 2) {
-    const firstSubs = getWebshopValue(daysWithSubs[0], 'subscriptions_active')!;
-    const lastSubs = getWebshopValue(daysWithSubs[daysWithSubs.length - 1], 'subscriptions_active')!;
-    const diff = lastSubs - firstSubs;
-    subsGrowthStr = (diff >= 0 ? '+' : '') + diff;
+  if (newSubsValues.length >= 1) {
+    const sum = newSubsValues.reduce((a, b) => a + b, 0);
+    subsGrowthStr = (sum >= 0 ? '+' : '') + sum;
   }
 
   // Footer: Average new subs per day
-  const newSubsValues = days.map(d => getWebshopValue(d, 'subscriptions_new')).filter((v): v is number => v != null);
   const avgNewSubs = avgOf(newSubsValues);
 
   // Last updated timestamp — always CET/CEST (not browser timezone)
