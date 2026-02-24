@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import NavHeader from './NavHeader';
 import { useDataVersion } from '@/hooks/useDataVersion';
 import AllOpenTrendChart from './charts/AllOpenTrendChart';
@@ -25,9 +26,16 @@ interface MetricsRow {
 const REFRESH_MS = 5 * 60 * 1000;
 
 export default function ChartsView() {
+  const router = useRouter();
   const [weeks, setWeeks] = useState(4);
   const [metrics, setMetrics] = useState<MetricsRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (document.documentElement.hasAttribute('data-tv')) {
+      router.replace('/?tv');
+    }
+  }, [router]);
 
   const fetchData = useCallback(async () => {
     try {

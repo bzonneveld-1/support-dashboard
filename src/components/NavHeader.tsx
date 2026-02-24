@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,6 +10,11 @@ interface NavHeaderProps {
 
 export default function NavHeader({ rightContent }: NavHeaderProps) {
   const pathname = usePathname();
+  const [isTv, setIsTv] = useState(false);
+
+  useEffect(() => {
+    setIsTv(document.documentElement.hasAttribute('data-tv'));
+  }, []);
 
   return (
     <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
@@ -16,6 +22,7 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
         <h1 className="text-sm font-semibold text-[var(--dash-text)] tracking-tight">
           Support Dashboard
         </h1>
+        {!isTv && (
         <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5">
           <Link
             href="/"
@@ -38,6 +45,7 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
             Charts
           </Link>
         </div>
+        )}
       </div>
       <div className="absolute left-1/2 -translate-x-1/2">
         <img src="/bold-logo.png" alt="Bold" className="nav-logo-dark h-[2rem] w-auto -mt-1" />
