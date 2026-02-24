@@ -28,7 +28,7 @@
   .nav-logo-white { display: block !important; }
 }
 
-/* TV mode: ?tv in URL */
+/* ===== TV MODE: ?tv in URL ===== */
 html[data-tv] {
   font-size: 36px !important;
   --dash-bg: #000000;
@@ -40,16 +40,31 @@ html[data-tv] {
   --dash-alt: #242426;
   --dash-hover: #3A3A3C;
 }
+
+/* Hide nav and footer — TV doesn't need navigation */
+html[data-tv] .tv-hide { display: none !important; }
+html[data-tv] tfoot { display: none !important; }
+
+/* Minimal outer padding — maximize screen usage */
+html[data-tv] .dash-outer { padding: 0.15rem !important; }
+
+/* Table fills entire screen */
+html[data-tv] .dash-outer > div:last-child {
+  height: calc(100vh - 0.3rem) !important;
+  border-radius: 0 !important;
+}
+
+/* White logo */
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
 
-/* Tighter cell spacing in TV mode to fit larger text */
+/* Tighter horizontal cell padding to fit larger text */
 html[data-tv] table td:not(:first-child),
 html[data-tv] table th:not(:first-child) {
-  padding-left: 0.12rem !important;
-  padding-right: 0.12rem !important;
+  padding-left: 0.1rem !important;
+  padding-right: 0.1rem !important;
 }
 html[data-tv] table td:first-child {
-  padding-left: 0.4rem !important;
-  padding-right: 0.15rem !important;
+  padding-left: 0.35rem !important;
+  padding-right: 0.1rem !important;
 }

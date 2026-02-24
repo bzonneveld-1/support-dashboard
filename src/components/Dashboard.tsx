@@ -228,7 +228,8 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   return (
-    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
+    <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
+      <div className="tv-hide">
       <NavHeader
         rightContent={
           <div className="flex items-center gap-3">
@@ -260,6 +261,7 @@ export default function Dashboard() {
           </div>
         }
       />
+      </div>
 
       {/* Table card */}
       <div className="overflow-hidden bg-[var(--dash-surface)] rounded-2xl shadow-sm" style={{ height: 'calc(100vh - 7.5rem)' }}>
