@@ -28,9 +28,9 @@
   .nav-logo-white { display: block !important; }
 }
 
-/* ===== TV MODE: ?tv in URL ===== */
+/* ===== TV MODE ===== */
 html[data-tv] {
-  font-size: 36px !important;
+  font-size: 38px !important;
   --dash-bg: #000000;
   --dash-surface: #1C1C1E;
   --dash-text: #F5F5F7;
@@ -41,30 +41,30 @@ html[data-tv] {
   --dash-hover: #3A3A3C;
 }
 
-/* Hide nav and footer — TV doesn't need navigation */
+/* Hide full nav + footer — TV doesn't need them */
 html[data-tv] .tv-hide { display: none !important; }
 html[data-tv] tfoot { display: none !important; }
 
-/* Minimal outer padding — maximize screen usage */
-html[data-tv] .dash-outer { padding: 0.15rem !important; }
+/* Black border around the card */
+html[data-tv] .dash-outer { padding: 0.35rem !important; }
 
-/* Table fills entire screen */
+/* Table card fills remaining space with rounded corners */
 html[data-tv] .dash-outer > div:last-child {
-  height: calc(100vh - 0.3rem) !important;
-  border-radius: 0 !important;
+  height: calc(100vh - 0.7rem) !important;
+  border-radius: 0.5rem !important;
 }
 
 /* White logo */
 html[data-tv] .nav-logo-dark { display: none !important; }
 html[data-tv] .nav-logo-white { display: block !important; }
 
-/* Tighter horizontal cell padding to fit larger text */
+/* Tighter horizontal padding so bigger text fits */
 html[data-tv] table td:not(:first-child),
 html[data-tv] table th:not(:first-child) {
-  padding-left: 0.1rem !important;
-  padding-right: 0.1rem !important;
+  padding-left: 0.08rem !important;
+  padding-right: 0.08rem !important;
 }
 html[data-tv] table td:first-child {
-  padding-left: 0.35rem !important;
-  padding-right: 0.1rem !important;
+  padding-left: 0.3rem !important;
+  padding-right: 0.08rem !important;
 }
