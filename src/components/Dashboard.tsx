@@ -304,35 +304,38 @@ export default function Dashboard() {
   return (
     <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
       <NavHeader
-        rightContent={!isTv ? (
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-[#8E8E93]">
+        rightContent={
+          <div className={`flex items-center ${isTv ? '' : 'gap-3'}`} style={isTv ? { gap: '8px' } : undefined}>
+            <span className={isTv ? '' : 'text-xs text-[#8E8E93]'} style={isTv ? { fontSize: '11px', color: '#8E8E93' } : undefined}>
               Week {weekInfo?.week} &middot; {data && formatDateRange(data.week, data.weekEnd)}
             </span>
-            <div className="flex gap-1">
+            <div className={`flex ${isTv ? '' : 'gap-1'}`} style={isTv ? { gap: '3px' } : undefined}>
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, -1))}
-                className="w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs"
+                className={isTv ? 'rounded-md flex items-center justify-center text-[#8E8E93] transition-colors' : 'w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs'}
+                style={isTv ? { width: '24px', height: '24px', fontSize: '11px' } : undefined}
               >
                 &#9664;
               </button>
               {!isCurrentWeek && (
                 <button
                   onClick={() => setWeekParam('current')}
-                  className="h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[0.5625rem] font-medium hover:bg-[#0071E3] transition-colors"
+                  className={isTv ? 'rounded-md bg-[#007AFF] text-white font-medium transition-colors' : 'h-7 px-2.5 rounded-md bg-[#007AFF] text-white text-[0.5625rem] font-medium hover:bg-[#0071E3] transition-colors'}
+                  style={isTv ? { height: '24px', padding: '0 8px', fontSize: '10px' } : undefined}
                 >
                   Today
                 </button>
               )}
               <button
                 onClick={() => data && setWeekParam(navigateWeek(data.week, 1))}
-                className="w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs"
+                className={isTv ? 'rounded-md flex items-center justify-center text-[#8E8E93] transition-colors' : 'w-7 h-7 rounded-md hover:bg-[var(--dash-hover)] flex items-center justify-center text-[#8E8E93] hover:text-[var(--dash-text)] transition-colors text-xs'}
+                style={isTv ? { width: '24px', height: '24px', fontSize: '11px' } : undefined}
               >
                 &#9654;
               </button>
             </div>
           </div>
-        ) : undefined}
+        }
       />
 
       {/* Table card */}
