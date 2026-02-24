@@ -340,10 +340,10 @@ export default function Dashboard() {
                 <th rowSpan={3} className="px-5 py-2 text-left text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider w-[7.5rem] border-r border-[#343436]">
                   Day
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: '5px solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Daily Totals
                 </th>
-                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: '5px solid var(--dash-split)' }}>
+                <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Ticket Snapshots
                 </th>
                 <th colSpan={4} className="px-4 pt-2.5 pb-0.5 text-[0.6875rem] font-semibold text-[#B3B3B5] uppercase tracking-[0.12em]">
@@ -356,20 +356,20 @@ export default function Dashboard() {
                 <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Total Calls</th>
                 <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Chatbot Chats</th>
                 <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Emails Sent</th>
-                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: '5px solid var(--dash-split)' }}>WhatsApps Sent</th>
+                <th rowSpan={2} className="px-4 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
                 {/* Ticket Snapshots — colSpan=2 each */}
                 {TICKET_METRICS.map((m, i) => (
                   <th
                     key={m.key}
                     colSpan={2}
                     className={`px-3 py-1 text-[0.6875rem] font-medium text-white uppercase tracking-wider ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}
-                    style={i === TICKET_METRICS.length - 1 ? { borderRight: '5px solid var(--dash-split)' } : undefined}
+                    style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                   >
                     {m.label}
                   </th>
                 ))}
                 {/* Webshop — rowSpan=2 */}
-                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Rev MTD</th>
+                <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Month Rev.</th>
                 <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Rev Daily</th>
                 <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs Active</th>
                 <th rowSpan={2} className="px-3 py-1 text-[0.6875rem] font-medium text-[#B3B3B5] uppercase tracking-wider">Subs New</th>
@@ -383,7 +383,7 @@ export default function Dashboard() {
                     </th>
                     <th
                       className="px-2 pb-1.5 text-[0.625rem] font-medium text-[#9D9DA0]"
-                      style={i === TICKET_METRICS.length - 1 ? { borderRight: '5px solid var(--dash-split)' } : undefined}
+                      style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                     >
                       18
                     </th>
@@ -441,7 +441,7 @@ export default function Dashboard() {
                     </td>
 
                     {/* WhatsApps Sent — split line right */}
-                    <td className="px-4 py-2.5 tabular-nums" style={{ borderRight: '5px solid var(--dash-split)' }}>
+                    <td className="px-4 py-2.5 tabular-nums" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                       <DailyCell day={day} value={dailyWaMsgs} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
                     </td>
 
@@ -467,7 +467,7 @@ export default function Dashboard() {
                           {/* 18:00 — color retained, delta text removed */}
                           <td
                             className="px-3 py-2.5 tabular-nums"
-                            style={isLast ? { borderRight: '5px solid var(--dash-split)' } : undefined}
+                            style={isLast ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                           >
                             {day.isFuture ? (
                               <span className="text-[var(--dash-muted)]">—</span>
@@ -540,46 +540,22 @@ export default function Dashboard() {
                 </td>
 
                 {/* Daily Totals: sums */}
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{totalCalls}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{totalChat}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{totalEmails}</span>
-                </td>
-                <td className="py-2.5 tabular-nums" style={{ borderRight: '5px solid var(--dash-split)' }}>
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{totalWaMsgs}</span>
-                </td>
+                <FooterCell value={totalCalls} label="total" />
+                <FooterCell value={totalChat} label="total" />
+                <FooterCell value={totalEmails} label="total" />
+                <FooterCell value={totalWaMsgs} label="total" splitRight />
 
                 {/* Ticket Snapshots: averages (08 + 18 per metric) */}
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgUnassigned08}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgUnassigned18}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgAllOpen08}</span>
-                </td>
-                <td className="py-2.5 tabular-nums" style={{ borderRight: '5px solid var(--dash-split)' }}>
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgAllOpen18}</span>
-                </td>
+                <FooterCell value={avgUnassigned08} label="avg" />
+                <FooterCell value={avgUnassigned18} label="avg" />
+                <FooterCell value={avgAllOpen08} label="avg" />
+                <FooterCell value={avgAllOpen18} label="avg" splitRight />
 
                 {/* Webshop: growth / averages */}
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{revMtdGrowthStr}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgDailyRev}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{subsGrowthStr}</span>
-                </td>
-                <td className="py-2.5 tabular-nums">
-                  <span className="text-[var(--dash-text)] text-sm font-medium">{avgNewSubs}</span>
-                </td>
+                <FooterCell value={revMtdGrowthStr} label="growth" />
+                <FooterCell value={avgDailyRev} label="avg" />
+                <FooterCell value={subsGrowthStr} label="growth" />
+                <FooterCell value={avgNewSubs} label="avg" />
               </tr>
             </tfoot>
           </table>
@@ -614,6 +590,20 @@ function DailyCell({ day, value, backfilling, onBackfill }: {
     return <span className="text-[var(--dash-muted)]">—</span>;
   }
   return <MissingCell backfilling={backfilling} onBackfill={onBackfill} />;
+}
+
+function FooterCell({ value, label, splitRight }: { value: string | number; label: string; splitRight?: boolean }) {
+  return (
+    <td
+      className="py-2.5 tabular-nums"
+      style={splitRight ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
+    >
+      <div>
+        <span className="text-[var(--dash-text)] text-sm font-medium">{value}</span>
+        <div className="text-[0.4375rem] text-[#8E8E93] uppercase tracking-wider leading-none mt-0.5">{label}</div>
+      </div>
+    </td>
+  );
 }
 
 function MissingCell({ backfilling, onBackfill }: { backfilling: boolean; onBackfill: () => void }) {

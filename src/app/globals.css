@@ -19,6 +19,7 @@
   --dash-hover: #F0F0F2;
   --card-gap: 7.5rem;
   --dash-split: var(--dash-border);
+  --dash-split-w: 3px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -49,6 +50,7 @@ html[data-tv] {
   --dash-hover: #3A3A3C;
   --card-gap: 200px;
   --dash-split: #ffffff;
+  --dash-split-w: 8px;
 }
 
 html[data-tv] .nav-logo-dark { display: none !important; }
@@ -59,7 +61,7 @@ html[data-tv] tbody tr { height: auto !important; }
 
 /* Bigger data numbers */
 html[data-tv] .text-xl {
-  font-size: 88px !important;
+  font-size: 76px !important;
   line-height: 1 !important;
 }
 
