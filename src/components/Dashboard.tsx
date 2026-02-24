@@ -335,11 +335,11 @@ export default function Dashboard() {
         <div className="flex-1 min-h-0">
           <table className="w-full h-full border-collapse text-center" style={{ tableLayout: 'fixed' }}>
             <colgroup>
+              <col style={{ width: '8%' }} />
               <col style={{ width: '7%' }} />
-              <col style={{ width: '7.25%' }} />
-              <col style={{ width: '7.25%' }} />
-              <col style={{ width: '7.25%' }} />
-              <col style={{ width: '7.25%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
               <col style={{ width: '7%' }} />
               <col style={{ width: '7%' }} />
               <col style={{ width: '7%' }} />
@@ -428,7 +428,7 @@ export default function Dashboard() {
                     style={{ height: `${100 / 7}%` }}
                   >
                     {/* Day name */}
-                    <td className="px-5 py-2.5 text-left relative border-r border-[var(--dash-border)]">
+                    <td className="px-5 py-2.5 text-left relative border-r border-[var(--dash-border)] overflow-hidden whitespace-nowrap">
                       {day.isToday && (
                         <div className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full bg-[#007AFF]" />
                       )}
@@ -436,7 +436,7 @@ export default function Dashboard() {
                         {day.dayName}
                       </span>
                       {day.isToday && (
-                        <span className="ml-1.5 text-[0.5625rem] font-medium text-[#66ADFF] uppercase tracking-widest">today</span>
+                        <span className="ml-1 text-[0.5625rem] font-medium text-[#66ADFF] uppercase tracking-wide">today</span>
                       )}
                     </td>
 
