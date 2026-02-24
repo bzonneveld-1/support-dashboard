@@ -303,9 +303,8 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   // Header text sizes: bigger on desktop for readability, smaller on TV to reduce visual noise
-  const hGroup = isTv ? 'text-[0.4375rem]' : 'text-[0.625rem]';   // group labels (Daily Totals, etc.)
-  const hCol = isTv ? 'text-[0.375rem]' : 'text-[0.625rem]';      // column names
-  const hSub = isTv ? 'text-[0.25rem]' : 'text-[0.5rem]';         // 08/18 sub-headers
+  const hGroup = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';   // group labels: TV 24px, desktop 10px
+  const hCol = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';     // column names: TV 24px, desktop 10px
 
   return (
     <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
@@ -406,11 +405,11 @@ export default function Dashboard() {
               <tr className="bg-[#1D1D1F]">
                 {TICKET_METRICS.map((m, i) => (
                   <Fragment key={m.key}>
-                    <th className={`px-2 pb-1.5 ${hSub} font-medium text-white/70 ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
+                    <th className={`px-2 pb-1.5 text-[0.5rem] font-medium text-white/70 ${i > 0 ? 'border-l border-[#2B2B2D]' : ''}`}>
                       08
                     </th>
                     <th
-                      className={`px-2 pb-1.5 ${hSub} font-medium text-white/70`}
+                      className={`px-2 pb-1.5 text-[0.5rem] font-medium text-white/70`}
                       style={i === TICKET_METRICS.length - 1 ? { borderRight: 'var(--dash-split-w) solid var(--dash-split)' } : undefined}
                     >
                       18
