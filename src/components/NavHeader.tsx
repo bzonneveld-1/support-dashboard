@@ -40,10 +40,8 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
         </div>
       </div>
       <div className="absolute left-1/2 -translate-x-1/2">
-        <picture>
-          <source srcSet="/bold-logo-white.png" media="(prefers-color-scheme: dark)" />
-          <img src="/bold-logo.png" alt="Bold" className="h-[2rem] w-auto -mt-1" />
-        </picture>
+        <img src="/bold-logo.png" alt="Bold" className="nav-logo-dark h-[2rem] w-auto -mt-1" />
+        <img src="/bold-logo-white.png" alt="Bold" className="nav-logo-white hidden h-[2rem] w-auto -mt-1" />
       </div>
       <div className="flex items-center gap-3">
         {rightContent}

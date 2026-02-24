@@ -25,16 +25,21 @@
     --dash-alt: #2C2C2E;
     --dash-hover: #3A3A3C;
   }
+  .nav-logo-dark { display: none; }
+  .nav-logo-white { display: block !important; }
 }
 
-/* Scale up all rem-based sizes for large displays / TV */
-@media (min-width: 1280px) {
-  :root {
-    font-size: 20px;
-  }
+/* TV mode: ?tv in URL sets data-tv on <html> */
+html[data-tv] {
+  font-size: 28px !important;
+  --dash-bg: #000000;
+  --dash-surface: #1C1C1E;
+  --dash-text: #F5F5F7;
+  --dash-border: #38383A;
+  --dash-muted: #48484A;
+  --dash-today: #001A33;
+  --dash-alt: #2C2C2E;
+  --dash-hover: #3A3A3C;
 }
-@media (min-width: 1600px) {
-  :root {
-    font-size: 24px;
-  }
-}
+html[data-tv] .nav-logo-dark { display: none !important; }
+html[data-tv] .nav-logo-white { display: block !important; }

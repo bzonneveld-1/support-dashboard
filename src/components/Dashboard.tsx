@@ -174,6 +174,13 @@ export default function Dashboard() {
 
   useDataVersion(fetchData);
 
+  // TV mode: ?tv in URL triggers large fonts + dark theme
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('tv')) {
+      document.documentElement.setAttribute('data-tv', '');
+    }
+  }, []);
+
   const handleBackfill = async (date: string, timeSlot: string) => {
     const key = `${date}-${timeSlot}`;
     setBackfilling(key);
