@@ -256,7 +256,7 @@ export default function Dashboard() {
 
       {/* Table card */}
       <div className="flex-1 overflow-hidden min-h-0 bg-white rounded-2xl shadow-sm">
-        <table className="w-full border-collapse text-center">
+        <table className="w-full h-full border-collapse text-center">
           <thead className="sticky top-0 z-10">
             {/* Row 1: Group labels */}
             <tr className="bg-[#1D1D1F]">
@@ -315,6 +315,7 @@ export default function Dashboard() {
                     ${day.isToday ? 'bg-[#F5F9FF]' : dayIdx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}
                     ${day.isFuture ? 'opacity-20' : ''}
                   `}
+                  style={{ height: `${100 / 7}%` }}
                 >
                   {/* Day name */}
                   <td className="px-5 py-2.5 text-left relative border-r border-[#E5E5EA]">
