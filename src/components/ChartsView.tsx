@@ -18,6 +18,8 @@ interface MetricsRow {
   whatsapp_waiting_on_us: number | null;
   waiting_on_us: number | null;
   total_calls: number | null;
+  calls_answered: number | null;
+  calls_missed: number | null;
   total_chatbot_chats: number | null;
   total_emails: number | null;
   total_wa_messages: number | null;
