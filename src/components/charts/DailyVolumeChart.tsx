@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
-  Tooltip, Legend, CartesianGrid, Cell,
+  Tooltip, Legend, CartesianGrid,
 } from 'recharts';
 
 interface MetricsRow {
@@ -14,6 +14,11 @@ interface MetricsRow {
   total_emails: number | null;
   total_wa_messages: number | null;
 }
+
+const formatDate = (d: string) => {
+  const date = new Date(d + 'T12:00:00Z');
+  return `${date.getUTCDate()}/${date.getUTCMonth() + 1}`;
+};
 
 export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] }) {
   const now = new Date();
@@ -35,36 +40,47 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
       }
     }
     return Array.from(byDate.entries())
-      .map(([date, vals]) => ({ date, ...vals, isToday: date === today }))
+      .map(([date, vals]) => ({ date, ...vals }))
       .sort((a, b) => a.date.localeCompare(b.date));
-  }, [metrics, today]);
-
-  const formatDate = (d: string) => {
-    const date = new Date(d + 'T12:00:00Z');
-    return `${date.getUTCDate()}/${date.getUTCMonth() + 1}`;
-  };
+  }, [metrics]);
 
   const yMax = useMemo(() => {
     const maxTotal = Math.max(...data.map(d => d.Calls + d.Chatbot + d.Emails + d['WA Msgs']), 0);
     return Math.ceil(maxTotal * 1.15);
   }, [data]);
 
-  const todayCells = data.map((entry, i) => (
-    <Cell key={i} fillOpacity={entry.isToday ? 0.45 : 1} />
-  ));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const renderTick = (props: any) => {
+    const { x, y, payload } = props;
+    const label = formatDate(payload.value);
+    const isToday = payload.value === today;
+    if (isToday) {
+      return (
+        <g transform={`translate(${x},${y})`}>
+          <circle cx={0} cy={8} r={12} fill="none" stroke="#007AFF" strokeWidth={1.5} opacity={0.5} />
+          <text x={0} y={12} textAnchor="middle" fontSize={11} fill="#007AFF">{label}</text>
+        </g>
+      );
+    }
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text x={0} y={12} textAnchor="middle" fontSize={11} fill="#8E8E93">{label}</text>
+      </g>
+    );
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#E5E5EA" />
-        <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 11, fill: '#8E8E93' }} />
+        <XAxis dataKey="date" tick={renderTick} />
         <YAxis domain={[0, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Legend />
-        <Bar dataKey="Calls" stackId="a" fill="#007AFF">{todayCells}</Bar>
-        <Bar dataKey="Chatbot" stackId="a" fill="#8E8E93">{todayCells}</Bar>
-        <Bar dataKey="Emails" stackId="a" fill="#FF6620">{todayCells}</Bar>
-        <Bar dataKey="WA Msgs" stackId="a" fill="#34C759" radius={[4, 4, 0, 0]}>{todayCells}</Bar>
+        <Bar dataKey="Calls" stackId="a" fill="#007AFF" />
+        <Bar dataKey="Chatbot" stackId="a" fill="#8E8E93" />
+        <Bar dataKey="Emails" stackId="a" fill="#FF6620" />
+        <Bar dataKey="WA Msgs" stackId="a" fill="#34C759" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

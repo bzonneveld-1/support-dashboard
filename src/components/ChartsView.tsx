@@ -73,7 +73,7 @@ export default function ChartsView() {
   );
 
   return (
-    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
+    <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
       <NavHeader rightContent={periodSelector} />
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
