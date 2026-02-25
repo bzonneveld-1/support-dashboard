@@ -31,10 +31,10 @@ export async function middleware(request: NextRequest) {
   const keyParam = request.nextUrl.searchParams.get('key');
   if (keyParam) {
     if (keyParam === secret) {
-      // Strip key, keep ?tv. Use raw request.url — NextURL searchParams
-      // drops valueless params like ?tv
-      const hasTv = /[?&]tv(?:&|=|$)/.test(request.url);
-      const target = request.nextUrl.origin + pathname + (hasTv ? '?tv' : '');
+      // Strip key, keep tv mode. Use tv=1 format because Vercel Edge
+      // Runtime drops valueless params (?tv) from NextURL searchParams
+      const hasTv = request.nextUrl.searchParams.get('tv') !== null;
+      const target = request.nextUrl.origin + pathname + (hasTv ? '?tv=1' : '');
       const response = NextResponse.redirect(target);
       response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
         httpOnly: true,
