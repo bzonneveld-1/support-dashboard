@@ -31,12 +31,15 @@ export async function middleware(request: NextRequest) {
   const keyParam = request.nextUrl.searchParams.get('key');
   if (keyParam) {
     if (keyParam === secret) {
-      // Strip key from URL, keep other params (like ?tv)
-      // Note: NextURL searchParams.delete() loses empty-value params like ?tv,
-      // so we build the search string manually
-      const cleanUrl = request.nextUrl.clone();
-      cleanUrl.search = request.nextUrl.searchParams.has('tv') ? '?tv' : '';
-      const response = NextResponse.redirect(cleanUrl);
+      // Strip key from URL, keep ?tv if present
+      // NextURL clone + searchParams manipulation loses empty-value params,
+      // so construct redirect URL from scratch
+      const hasTv = request.nextUrl.searchParams.has('tv');
+      const redirectUrl = new URL(
+        pathname + (hasTv ? '?tv' : ''),
+        request.nextUrl.origin
+      );
+      const response = NextResponse.redirect(redirectUrl);
       response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
