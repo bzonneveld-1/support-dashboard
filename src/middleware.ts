@@ -32,8 +32,10 @@ export async function middleware(request: NextRequest) {
   if (keyParam) {
     if (keyParam === secret) {
       // Strip key from URL, keep other params (like ?tv)
+      // Note: NextURL searchParams.delete() loses empty-value params like ?tv,
+      // so we build the search string manually
       const cleanUrl = request.nextUrl.clone();
-      cleanUrl.searchParams.delete('key');
+      cleanUrl.search = request.nextUrl.searchParams.has('tv') ? '?tv' : '';
       const response = NextResponse.redirect(cleanUrl);
       response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
         httpOnly: true,
