@@ -62,7 +62,7 @@ export default function AllOpenTrendChart({ metrics }: { metrics: MetricsRow[] }
         <Legend />
         <Line
           type="monotone" dataKey="morning" name="08:00"
-          stroke="#1C1C1E" strokeDasharray="5 5" dot={renderDot('#1C1C1E')} strokeWidth={2} connectNulls
+          stroke="#8E8E93" strokeDasharray="5 5" dot={renderDot('#8E8E93')} strokeWidth={2} connectNulls
         />
         <Line
           type="monotone" dataKey="evening" name="18:00"

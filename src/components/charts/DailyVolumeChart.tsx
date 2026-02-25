@@ -61,7 +61,7 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
         <YAxis domain={[0, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Legend />
-        <Bar dataKey="Calls" stackId="a" fill="#1C1C1E">{todayCells}</Bar>
+        <Bar dataKey="Calls" stackId="a" fill="#007AFF">{todayCells}</Bar>
         <Bar dataKey="Chatbot" stackId="a" fill="#8E8E93">{todayCells}</Bar>
         <Bar dataKey="Emails" stackId="a" fill="#FF6620">{todayCells}</Bar>
         <Bar dataKey="WA Msgs" stackId="a" fill="#34C759" radius={[4, 4, 0, 0]}>{todayCells}</Bar>

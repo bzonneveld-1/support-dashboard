@@ -63,7 +63,7 @@ export default function ChartsView() {
           className={`h-7 px-2.5 rounded-md text-[11px] font-medium transition-colors ${
             weeks === w
               ? 'bg-[#007AFF] text-white'
-              : 'text-[#8E8E93] hover:bg-white/80 hover:text-[#1C1C1E]'
+              : 'text-[#8E8E93] hover:bg-[var(--dash-surface)]/80 hover:text-[var(--dash-text)]'
           }`}
         >
           {w}w
@@ -73,7 +73,7 @@ export default function ChartsView() {
   );
 
   return (
-    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[#F2F2F7]">
+    <div className="h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
       <NavHeader rightContent={periodSelector} />
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
@@ -101,8 +101,8 @@ export default function ChartsView() {
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-5 flex flex-col">
-      <h2 className="text-[13px] font-semibold text-[#1C1C1E] mb-3">{title}</h2>
+    <div className="bg-[var(--dash-surface)] rounded-2xl shadow-sm p-5 flex flex-col">
+      <h2 className="text-[13px] font-semibold text-[var(--dash-text)] mb-3">{title}</h2>
       <div className="flex-1 min-h-[250px]">
         {children}
       </div>
