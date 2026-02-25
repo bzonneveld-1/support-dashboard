@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
-  Tooltip, CartesianGrid, Legend,
+  Tooltip, CartesianGrid, Legend, Cell,
 } from 'recharts';
 
 interface MetricsRow {
@@ -14,6 +14,9 @@ interface MetricsRow {
 }
 
 export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[] }) {
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
   const data = useMemo(() => {
     const byDate = new Map<string, { answered: number; missed: number }>();
     for (const m of metrics) {
@@ -30,9 +33,9 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
       }
     }
     return Array.from(byDate.entries())
-      .map(([date, { answered, missed }]) => ({ date, answered, missed }))
+      .map(([date, { answered, missed }]) => ({ date, answered, missed, isToday: date === today }))
       .sort((a, b) => a.date.localeCompare(b.date));
-  }, [metrics]);
+  }, [metrics, today]);
 
   const formatDate = (d: string) => {
     const date = new Date(d + 'T12:00:00Z');
@@ -44,6 +47,10 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
     return Math.ceil(maxTotal * 1.15);
   }, [data]);
 
+  const todayCells = data.map((entry, i) => (
+    <Cell key={i} fillOpacity={entry.isToday ? 0.45 : 1} />
+  ));
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -52,8 +59,12 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
         <YAxis domain={[0, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Legend />
-        <Bar dataKey="answered" name="Answered" stackId="calls" fill="#34C759" radius={[0, 0, 0, 0]} />
-        <Bar dataKey="missed" name="Missed" stackId="calls" fill="#FF3B30" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="answered" name="Answered" stackId="calls" fill="#34C759" radius={[0, 0, 0, 0]}>
+          {todayCells}
+        </Bar>
+        <Bar dataKey="missed" name="Missed" stackId="calls" fill="#FF3B30" radius={[4, 4, 0, 0]}>
+          {todayCells}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
