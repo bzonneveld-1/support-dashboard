@@ -3,30 +3,34 @@
 import { useMemo } from 'react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
-  Tooltip, CartesianGrid, Cell, ReferenceLine,
+  Tooltip, CartesianGrid, Legend,
 } from 'recharts';
 
 interface MetricsRow {
   metric_date: string;
   time_slot: string;
-  all_open_tickets: number | null;
+  calls_answered: number | null;
+  calls_missed: number | null;
 }
 
 export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[] }) {
   const data = useMemo(() => {
-    const byDate = new Map<string, { morning: number | null; evening: number | null }>();
+    const byDate = new Map<string, { answered: number; missed: number }>();
     for (const m of metrics) {
+      if (m.time_slot !== 'latest' && m.time_slot !== '18:00') continue;
       const date = m.metric_date.split('T')[0];
-      if (!byDate.has(date)) byDate.set(date, { morning: null, evening: null });
-      const entry = byDate.get(date)!;
-      if (m.time_slot === '08:00') entry.morning = m.all_open_tickets;
-      if (m.time_slot === '18:00') entry.evening = m.all_open_tickets;
+      const existing = byDate.get(date);
+      // Prefer latest, fallback to 18:00
+      if (!existing || m.time_slot === 'latest') {
+        const answered = m.calls_answered ?? 0;
+        const missed = m.calls_missed ?? 0;
+        if (answered > 0 || missed > 0) {
+          byDate.set(date, { answered, missed });
+        }
+      }
     }
     return Array.from(byDate.entries())
-      .map(([date, { morning, evening }]) => ({
-        date,
-        resolved: morning != null && evening != null ? morning - evening : 0,
-      }))
+      .map(([date, { answered, missed }]) => ({ date, answered, missed }))
       .sort((a, b) => a.date.localeCompare(b.date));
   }, [metrics]);
 
@@ -42,12 +46,9 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
         <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <YAxis tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
-        <ReferenceLine y={0} stroke="#8E8E93" />
-        <Bar dataKey="resolved" name="Net Resolved" radius={[4, 4, 0, 0]}>
-          {data.map((entry, i) => (
-            <Cell key={i} fill={entry.resolved >= 0 ? '#34C759' : '#FF6620'} />
-          ))}
-        </Bar>
+        <Legend />
+        <Bar dataKey="answered" name="Answered" stackId="calls" fill="#34C759" radius={[0, 0, 0, 0]} />
+        <Bar dataKey="missed" name="Missed" stackId="calls" fill="#FF3B30" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

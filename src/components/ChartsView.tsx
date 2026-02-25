@@ -95,7 +95,7 @@ export default function ChartsView() {
           <ChartCard title="Daily Volume by Channel">
             <DailyVolumeChart metrics={metrics} />
           </ChartCard>
-          <ChartCard title="Daily Resolution">
+          <ChartCard title="Calls per Day">
             <DailyResolutionChart metrics={metrics} />
           </ChartCard>
           <ChartCard title="Subscriptions Total">
