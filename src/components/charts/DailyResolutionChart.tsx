@@ -39,12 +39,17 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
     return `${date.getUTCDate()}/${date.getUTCMonth() + 1}`;
   };
 
+  const yMax = useMemo(() => {
+    const maxTotal = Math.max(...data.map(d => d.answered + d.missed), 0);
+    return Math.ceil(maxTotal * 1.15);
+  }, [data]);
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#E5E5EA" />
         <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 11, fill: '#8E8E93' }} />
-        <YAxis tick={{ fontSize: 11, fill: '#8E8E93' }} />
+        <YAxis domain={[0, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Legend />
         <Bar dataKey="answered" name="Answered" stackId="calls" fill="#34C759" radius={[0, 0, 0, 0]} />

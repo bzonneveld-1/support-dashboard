@@ -30,7 +30,7 @@ const REFRESH_MS = 5 * 60 * 1000;
 
 export default function ChartsView() {
   const router = useRouter();
-  const [weeks, setWeeks] = useState(4);
+  const [weeks, setWeeks] = useState(1);
   const [metrics, setMetrics] = useState<MetricsRow[]>([]);
   const [loading, setLoading] = useState(true);
 
