@@ -275,10 +275,14 @@ export default function Dashboard() {
   const avgNewSubs = avgOf(newSubsValues);
 
   // Last updated timestamp — always CET/CEST (not browser timezone)
+  // Use today's latest if available, otherwise fall back to the most recent day's latest
   const todayDay = days.find(d => d.isToday);
+  const latestCollectedAt = todayDay?.latest?.collected_at
+    ?? [...days].reverse().find(d => d.latest?.collected_at)?.latest?.collected_at
+    ?? null;
   let lastUpdatedTime: string | null = null;
-  if (todayDay?.latest?.collected_at) {
-    const d = new Date(todayDay.latest.collected_at);
+  if (latestCollectedAt) {
+    const d = new Date(latestCollectedAt);
     const y = d.getUTCFullYear();
     const dstStart = new Date(Date.UTC(y, 2, 31 - new Date(Date.UTC(y, 2, 31)).getUTCDay(), 1));
     const dstEnd = new Date(Date.UTC(y, 9, 31 - new Date(Date.UTC(y, 9, 31)).getUTCDay(), 1));
