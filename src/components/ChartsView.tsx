@@ -7,7 +7,6 @@ import { useDataVersion } from '@/hooks/useDataVersion';
 import AllOpenTrendChart from './charts/AllOpenTrendChart';
 import DailyVolumeChart from './charts/DailyVolumeChart';
 import DailyResolutionChart from './charts/DailyResolutionChart';
-import WaitingOnUsTrendChart from './charts/WaitingOnUsTrendChart';
 import SubscriptionsChart from './charts/SubscriptionsChart';
 
 interface MetricsRow {
@@ -96,9 +95,6 @@ export default function ChartsView() {
           </ChartCard>
           <ChartCard title="Daily Resolution">
             <DailyResolutionChart metrics={metrics} />
-          </ChartCard>
-          <ChartCard title="Waiting on Us Trend">
-            <WaitingOnUsTrendChart metrics={metrics} />
           </ChartCard>
           <ChartCard title="Subscriptions Active">
             <SubscriptionsChart metrics={metrics} />
