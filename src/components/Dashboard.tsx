@@ -466,6 +466,12 @@ export default function Dashboard() {
                       const deltaColor = getDeltaColor(morningVal, eveningVal);
                       const isLast = groupIdx === TICKET_METRICS.length - 1;
 
+                      // Interim: today before 18:00 run, show latest hourly ticket snapshot
+                      const latestTicketVal = day.isToday && eveningVal == null
+                        ? (day.latest?.[metric.key] as number | null) ?? null
+                        : null;
+                      const interimColor = latestTicketVal != null ? getDeltaColor(morningVal, latestTicketVal) : '';
+
                       return (
                         <Fragment key={metric.key}>
                           {/* 08:00 */}
@@ -489,6 +495,15 @@ export default function Dashboard() {
                               <span className={`text-xl font-medium ${deltaColor || 'text-[var(--dash-text)]'}`}>
                                 {eveningVal}
                               </span>
+                            ) : latestTicketVal != null ? (
+                              <div>
+                                <span className={`text-xl font-medium ${interimColor || 'text-[var(--dash-text)]'}`}>
+                                  {latestTicketVal}
+                                </span>
+                                <div className="text-[0.4375rem] text-[#8E8E93] uppercase tracking-wider leading-none mt-0.5">
+                                  latest
+                                </div>
+                              </div>
                             ) : (
                               <span className="text-[var(--dash-muted)]">—</span>
                             )}
