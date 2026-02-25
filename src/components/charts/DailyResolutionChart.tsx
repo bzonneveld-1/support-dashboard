@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
   Tooltip, CartesianGrid, Legend,
@@ -21,6 +21,11 @@ const formatDate = (d: string) => {
 export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[] }) {
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const [isTv, setIsTv] = useState(false);
+  useEffect(() => { setIsTv(document.documentElement.hasAttribute('data-tv')); }, []);
+  const tickSize = isTv ? 18 : 11;
+  const legendSize = isTv ? 16 : 12;
 
   const data = useMemo(() => {
     const byDate = new Map<string, { answered: number; missed: number }>();
@@ -51,17 +56,18 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
     const { x, y, payload } = props;
     const label = formatDate(payload.value);
     const isToday = payload.value === today;
+    const r = isTv ? 20 : 15;
     if (isToday) {
       return (
         <g transform={`translate(${x},${y})`}>
-          <circle cx={0} cy={8} r={12} fill="none" stroke="#007AFF" strokeWidth={1.5} opacity={0.5} />
-          <text x={0} y={12} textAnchor="middle" fontSize={11} fill="#007AFF">{label}</text>
+          <circle cx={0} cy={tickSize * 0.7} r={r} fill="none" stroke="#8E8E93" strokeWidth={1.5} opacity={0.45} />
+          <text x={0} y={tickSize * 1.1} textAnchor="middle" fontSize={tickSize} fill="#8E8E93">{label}</text>
         </g>
       );
     }
     return (
       <g transform={`translate(${x},${y})`}>
-        <text x={0} y={12} textAnchor="middle" fontSize={11} fill="#8E8E93">{label}</text>
+        <text x={0} y={tickSize * 1.1} textAnchor="middle" fontSize={tickSize} fill="#8E8E93">{label}</text>
       </g>
     );
   };
@@ -71,9 +77,9 @@ export default function DailyResolutionChart({ metrics }: { metrics: MetricsRow[
       <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#E5E5EA" />
         <XAxis dataKey="date" tick={renderTick} />
-        <YAxis domain={[0, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
+        <YAxis domain={[0, yMax]} tick={{ fontSize: tickSize, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: legendSize }} />
         <Bar dataKey="answered" name="Answered" stackId="calls" fill="#34C759" radius={[0, 0, 0, 0]} />
         <Bar dataKey="missed" name="Missed" stackId="calls" fill="#FF3B30" radius={[4, 4, 0, 0]} />
       </BarChart>

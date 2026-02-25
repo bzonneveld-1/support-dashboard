@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis,
   Tooltip, Legend, CartesianGrid,
@@ -15,6 +15,11 @@ interface MetricsRow {
 export default function AllOpenTrendChart({ metrics }: { metrics: MetricsRow[] }) {
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const [isTv, setIsTv] = useState(false);
+  useEffect(() => { setIsTv(document.documentElement.hasAttribute('data-tv')); }, []);
+  const tickSize = isTv ? 18 : 11;
+  const legendSize = isTv ? 16 : 12;
 
   const data = useMemo(() => {
     const byDate = new Map<string, { date: string; morning: number | null; evening: number | null; isToday: boolean }>();
@@ -47,7 +52,8 @@ export default function AllOpenTrendChart({ metrics }: { metrics: MetricsRow[] }
     const { cx, cy, payload } = props;
     if (cx == null || cy == null) return null;
     if (payload.isToday) {
-      return <circle cx={cx} cy={cy} r={4} fill="none" stroke={color} strokeWidth={2} opacity={0.6} />;
+      const r = isTv ? 8 : 4;
+      return <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth={2} opacity={0.6} />;
     }
     return null;
   };
@@ -56,10 +62,10 @@ export default function AllOpenTrendChart({ metrics }: { metrics: MetricsRow[] }
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#E5E5EA" />
-        <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 11, fill: '#8E8E93' }} />
-        <YAxis domain={[yDomain[0], yDomain[1]]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
+        <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: tickSize, fill: '#8E8E93' }} />
+        <YAxis domain={[yDomain[0], yDomain[1]]} tick={{ fontSize: tickSize, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: legendSize }} />
         <Line
           type="monotone" dataKey="morning" name="08:00"
           stroke="#8E8E93" strokeDasharray="5 5" dot={renderDot('#8E8E93')} strokeWidth={2} connectNulls

@@ -31,6 +31,11 @@ export default function ChartsView() {
   const [weeks, setWeeks] = useState(1);
   const [metrics, setMetrics] = useState<MetricsRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTv, setIsTv] = useState(false);
+
+  useEffect(() => {
+    setIsTv(document.documentElement.hasAttribute('data-tv'));
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -60,7 +65,8 @@ export default function ChartsView() {
         <button
           key={w}
           onClick={() => setWeeks(w)}
-          className={`h-7 px-2.5 rounded-md text-[11px] font-medium transition-colors ${
+          style={{ fontSize: isTv ? 24 : 11, height: isTv ? 40 : 28, padding: isTv ? '0 12px' : '0 10px' }}
+          className={`rounded-md font-medium transition-colors ${
             weeks === w
               ? 'bg-[#007AFF] text-white'
               : 'text-[#8E8E93] hover:bg-[var(--dash-surface)]/80 hover:text-[var(--dash-text)]'
@@ -81,16 +87,16 @@ export default function ChartsView() {
         </div>
       ) : (
         <div className="flex-1 overflow-auto min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <ChartCard title="All Open Trend">
+          <ChartCard title="All Open Trend" isTv={isTv}>
             <AllOpenTrendChart metrics={metrics} />
           </ChartCard>
-          <ChartCard title="Daily Volume by Channel">
+          <ChartCard title="Daily Volume by Channel" isTv={isTv}>
             <DailyVolumeChart metrics={metrics} />
           </ChartCard>
-          <ChartCard title="Calls per Day">
+          <ChartCard title="Calls per Day" isTv={isTv}>
             <DailyResolutionChart metrics={metrics} />
           </ChartCard>
-          <ChartCard title="Subscriptions Total">
+          <ChartCard title="Subscriptions Total" isTv={isTv}>
             <SubscriptionsChart metrics={metrics} />
           </ChartCard>
         </div>
@@ -99,10 +105,10 @@ export default function ChartsView() {
   );
 }
 
-function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
+function ChartCard({ title, children, isTv }: { title: string; children: React.ReactNode; isTv: boolean }) {
   return (
     <div className="bg-[var(--dash-surface)] rounded-2xl shadow-sm p-5 flex flex-col">
-      <h2 className="text-[13px] font-semibold text-[var(--dash-text)] mb-3">{title}</h2>
+      <h2 style={{ fontSize: isTv ? 28 : 13 }} className="font-semibold text-[var(--dash-text)] mb-3">{title}</h2>
       <div className="flex-1 min-h-[250px]">
         {children}
       </div>
