@@ -14,7 +14,7 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('tv') || document.documentElement.hasAttribute('data-tv')) {
-      setTvSuffix('?tv');
+      setTvSuffix('?tv=1');
     }
   }, []);
 
