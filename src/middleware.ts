@@ -31,11 +31,14 @@ export async function middleware(request: NextRequest) {
   const keyParam = request.nextUrl.searchParams.get('key');
   if (keyParam) {
     if (keyParam === secret) {
-      // Strip key, keep ?tv. Build URL string directly — NextURL objects
-      // lose empty-value params through clone/searchParams manipulation
-      const hasTv = request.nextUrl.searchParams.has('tv');
+      // Strip key, keep ?tv. Check raw search string because NextURL
+      // searchParams may not parse empty-value params like ?tv correctly
+      const hasTv = request.nextUrl.search.includes('tv');
       const target = request.nextUrl.origin + pathname + (hasTv ? '?tv' : '');
       const response = NextResponse.redirect(target);
+      response.headers.set('x-debug-hastv', String(hasTv));
+      response.headers.set('x-debug-search', request.nextUrl.search);
+      response.headers.set('x-debug-target', target);
       response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
