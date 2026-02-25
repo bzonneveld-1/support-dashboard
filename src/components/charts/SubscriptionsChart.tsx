@@ -13,9 +13,6 @@ interface MetricsRow {
 }
 
 export default function SubscriptionsChart({ metrics }: { metrics: MetricsRow[] }) {
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
   const data = useMemo(() => {
     const byDate = new Map<string, number>();
     for (const m of metrics) {
@@ -27,9 +24,9 @@ export default function SubscriptionsChart({ metrics }: { metrics: MetricsRow[] 
       }
     }
     return Array.from(byDate.entries())
-      .map(([date, subs]) => ({ date, subs, isToday: date === today }))
+      .map(([date, subs]) => ({ date, subs }))
       .sort((a, b) => a.date.localeCompare(b.date));
-  }, [metrics, today]);
+  }, [metrics]);
 
   const formatDate = (d: string) => {
     const date = new Date(d + 'T12:00:00Z');
@@ -43,16 +40,6 @@ export default function SubscriptionsChart({ metrics }: { metrics: MetricsRow[] 
   const yMin = Math.max(0, min - padding);
   const yMax = max + padding;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderDot = (props: any) => {
-    const { cx, cy, payload } = props;
-    if (cx == null || cy == null) return null;
-    if (payload.isToday) {
-      return <circle cx={cx} cy={cy} r={4} fill="none" stroke="#AF52DE" strokeWidth={2} opacity={0.6} />;
-    }
-    return <circle cx={cx} cy={cy} r={3} fill="#AF52DE" />;
-  };
-
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
@@ -62,7 +49,7 @@ export default function SubscriptionsChart({ metrics }: { metrics: MetricsRow[] 
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Line
           type="monotone" dataKey="subs" name="Subs Total"
-          stroke="#AF52DE" dot={renderDot} strokeWidth={2} connectNulls
+          stroke="#AF52DE" dot={{ r: 3, fill: '#AF52DE' }} strokeWidth={2} connectNulls
         />
       </LineChart>
     </ResponsiveContainer>
