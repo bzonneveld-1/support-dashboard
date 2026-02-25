@@ -31,9 +31,11 @@ export async function middleware(request: NextRequest) {
   const keyParam = request.nextUrl.searchParams.get('key');
   if (keyParam) {
     if (keyParam === secret) {
-      const token = await createSessionToken(secret);
-      const response = NextResponse.next();
-      response.cookies.set(AUTH_COOKIE_NAME, token, {
+      // Strip key from URL, keep other params (like ?tv)
+      const cleanUrl = request.nextUrl.clone();
+      cleanUrl.searchParams.delete('key');
+      const response = NextResponse.redirect(cleanUrl);
+      response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

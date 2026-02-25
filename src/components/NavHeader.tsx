@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,6 +10,13 @@ interface NavHeaderProps {
 
 export default function NavHeader({ rightContent }: NavHeaderProps) {
   const pathname = usePathname();
+  const [tvSuffix, setTvSuffix] = useState('');
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('tv') || document.documentElement.hasAttribute('data-tv')) {
+      setTvSuffix('?tv');
+    }
+  }, []);
 
   return (
     <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
@@ -18,7 +26,7 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
         </h1>
         <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5">
           <Link
-            href="/"
+            href={`/${tvSuffix}`}
             className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
               pathname === '/'
                 ? 'bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-sm'
@@ -28,7 +36,7 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
             Table
           </Link>
           <Link
-            href="/charts"
+            href={`/charts${tvSuffix}`}
             className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
               pathname === '/charts'
                 ? 'bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-sm'
