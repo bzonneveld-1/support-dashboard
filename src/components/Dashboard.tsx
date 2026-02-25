@@ -396,8 +396,8 @@ export default function Dashboard() {
                   </th>
                 ))}
                 {/* Daily Totals — rowSpan=2 */}
-                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Answered</th>
-                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Missed</th>
+                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Answered Calls</th>
+                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Missed Calls</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Chatbot Sent</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Emails Sent</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
@@ -502,9 +502,9 @@ export default function Dashboard() {
                       <DailyCell day={day} value={dailyAnswered} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
                     </td>
 
-                    {/* Missed */}
+                    {/* Missed Calls — red when > 5 */}
                     <td className="px-4 py-2.5 tabular-nums">
-                      <DailyCell day={day} value={dailyMissed} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
+                      <DailyCell day={day} value={dailyMissed} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} warnAbove={5} />
                     </td>
 
                     {/* Chatbot Chats */}
@@ -614,17 +614,19 @@ export default function Dashboard() {
 
 // ============ Sub-components ============
 
-function DailyCell({ day, value, backfilling, onBackfill }: {
+function DailyCell({ day, value, backfilling, onBackfill, warnAbove }: {
   day: DayData;
   value: number | null;
   backfilling: boolean;
   onBackfill: () => void;
+  warnAbove?: number;
 }) {
   if (day.isFuture) {
     return <span className="text-[var(--dash-muted)]">—</span>;
   }
   if (value != null) {
-    return <span className="text-xl font-medium text-[var(--dash-text)]">{value}</span>;
+    const color = warnAbove != null && value > warnAbove ? 'text-[#FF3B30]' : 'text-[var(--dash-text)]';
+    return <span className={`text-xl font-medium ${color}`}>{value}</span>;
   }
   if (day.isToday) {
     return <span className="text-[var(--dash-muted)]">—</span>;
