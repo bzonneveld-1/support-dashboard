@@ -34,7 +34,13 @@ export default function ChartsView() {
   const [isTv, setIsTv] = useState(false);
 
   useEffect(() => {
-    setIsTv(document.documentElement.hasAttribute('data-tv'));
+    if (new URLSearchParams(window.location.search).has('tv')) {
+      document.documentElement.setAttribute('data-tv', '');
+      document.documentElement.style.setProperty('--card-gap', '180px');
+      setIsTv(true);
+    } else {
+      setIsTv(document.documentElement.hasAttribute('data-tv'));
+    }
   }, []);
 
   const fetchData = useCallback(async () => {
