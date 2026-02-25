@@ -51,7 +51,7 @@ export default function SubscriptionsChart({ metrics }: { metrics: MetricsRow[] 
         <YAxis domain={[yMin, yMax]} tick={{ fontSize: 11, fill: '#8E8E93' }} />
         <Tooltip labelFormatter={(label) => formatDate(String(label))} />
         <Line
-          type="monotone" dataKey="subs" name="Subs Active"
+          type="monotone" dataKey="subs" name="Subs Total"
           stroke="#AF52DE" dot={{ r: 3, fill: '#AF52DE' }} strokeWidth={2} connectNulls
         />
       </LineChart>

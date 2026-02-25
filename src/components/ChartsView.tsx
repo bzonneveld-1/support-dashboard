@@ -98,7 +98,7 @@ export default function ChartsView() {
           <ChartCard title="Daily Resolution">
             <DailyResolutionChart metrics={metrics} />
           </ChartCard>
-          <ChartCard title="Subscriptions Active">
+          <ChartCard title="Subscriptions Total">
             <SubscriptionsChart metrics={metrics} />
           </ChartCard>
         </div>

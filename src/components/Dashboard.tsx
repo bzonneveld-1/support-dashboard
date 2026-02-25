@@ -360,7 +360,7 @@ export default function Dashboard() {
               <col style={{ width: '6.5%' }} />
               <col style={{ width: '6.5%' }} />
               <col style={{ width: '6.5%' }} />
-              {/* Webshop: Rev MTD, Rev Daily, Subs Active, Subs New */}
+              {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New */}
               <col style={{ width: '8.25%' }} />
               <col style={{ width: '8.25%' }} />
               <col style={{ width: '8.25%' }} />
@@ -404,7 +404,7 @@ export default function Dashboard() {
                 {/* Webshop — rowSpan=2 */}
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Month Rev.</th>
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Rev Daily</th>
-                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Subs Active</th>
+                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Subs Total</th>
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Subs New</th>
               </tr>
               {/* Row 3: 08/18 sub-headers for ticket metrics only */}
@@ -544,7 +544,7 @@ export default function Dashboard() {
                       )}
                     </td>
 
-                    {/* Subs Active */}
+                    {/* Subs Total */}
                     <td className="px-3 py-2.5 tabular-nums">
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
