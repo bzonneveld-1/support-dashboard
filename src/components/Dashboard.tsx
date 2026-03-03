@@ -640,7 +640,7 @@ function DailyCell({ day, value, backfilling, onBackfill, warnAbove }: {
     return <span className="text-[var(--dash-muted)]">—</span>;
   }
   if (value != null) {
-    const color = warnAbove != null && value > warnAbove ? 'text-[#FF3B30]' : 'text-[var(--dash-text)]';
+    const color = warnAbove != null && value === 0 ? 'text-[#34C759]' : warnAbove != null && value > warnAbove ? 'text-[#FF3B30]' : 'text-[var(--dash-text)]';
     return <span className={`text-xl font-medium ${color}`}>{value}</span>;
   }
   if (day.isToday) {
