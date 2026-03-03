@@ -28,7 +28,7 @@ interface MetricsRow {
 const REFRESH_MS = 5 * 60 * 1000;
 
 export default function ChartsView() {
-  const [weeks, setWeeks] = useState(1);
+  const [weeks, setWeeks] = useState(2);
   const [metrics, setMetrics] = useState<MetricsRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isTv, setIsTv] = useState(false);
