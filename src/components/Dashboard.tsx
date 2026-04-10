@@ -402,8 +402,8 @@ export default function Dashboard() {
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Emails Sent</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
                 {/* Webshop — rowSpan=2 */}
-                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Month Rev.<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>excl. BTW</span></th>
-                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Rev Daily<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>excl. BTW</span></th>
+                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Month Rev.<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>Ex VAT</span></th>
+                <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Rev Daily<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>Ex VAT</span></th>
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Subs Total</th>
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Subs New</th>
               </tr>
