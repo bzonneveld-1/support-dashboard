@@ -19,12 +19,15 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
   }, []);
 
   return (
-    <div className="relative flex items-center justify-between mb-4 flex-shrink-0">
-      <div className="flex items-center gap-4">
-        <h1 className="text-sm font-semibold text-[var(--dash-text)] tracking-tight">
+    <div
+      className="nav-header grid items-center mb-4 flex-shrink-0 gap-3"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)' }}
+    >
+      <div className="flex items-center gap-4 min-w-0">
+        <h1 className="text-sm font-semibold text-[var(--dash-text)] tracking-tight whitespace-nowrap">
           Support Dashboard
         </h1>
-        <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5">
+        <div className="flex bg-[var(--dash-border)] rounded-lg p-0.5 flex-shrink-0">
           <Link
             href={`/${tvSuffix}`}
             className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
@@ -45,13 +48,23 @@ export default function NavHeader({ rightContent }: NavHeaderProps) {
           >
             Charts
           </Link>
+          <Link
+            href={`/target${tvSuffix}`}
+            className={`px-3 py-1 text-[0.6875rem] font-medium rounded-md transition-colors ${
+              pathname === '/target'
+                ? 'bg-[var(--dash-surface)] text-[var(--dash-text)] shadow-sm'
+                : 'text-[#8E8E93] hover:text-[var(--dash-text)]'
+            }`}
+          >
+            Target
+          </Link>
         </div>
       </div>
-      <div className="absolute left-1/2 -translate-x-1/2">
+      <div className="justify-self-center">
         <img src="/bold-logo.png" alt="Bold" className="nav-logo-dark h-[2rem] w-auto -mt-1" />
         <img src="/bold-logo-white.png" alt="Bold" className="nav-logo-white hidden h-[2rem] w-auto -mt-1" />
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 justify-self-end min-w-0">
         {rightContent}
       </div>
     </div>
