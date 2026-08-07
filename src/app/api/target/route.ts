@@ -18,14 +18,14 @@ function dayKey(iso: string): string {
 }
 
 export async function GET() {
-  const [{ data: configRows }, { data: subRows, error }, { count: pendingCount }] = await Promise.all([
+  const [{ data: configRows }, { data: subRows, error }, { data: pendingRows }] = await Promise.all([
     supabase.from('target_config').select('key, value'),
     supabase
       .from('target_subs')
       .select('sub_id, display_id, source, status, sub_created_at, first_counted_at, canceled_detected_at, agent')
       .not('source', 'is', null)
       .order('first_counted_at', { ascending: false }),
-    supabase.from('target_claims_pending').select('*', { count: 'exact', head: true }),
+    supabase.from('target_claims_pending').select('reason'),
   ]);
 
   if (error) {
@@ -85,7 +85,10 @@ export async function GET() {
     direct_sales: live.filter(r => r.source === 'direct_sales').length,
     support: live.filter(r => r.source === 'support').length,
     canceled: rows.filter(r => r.status === 'canceled').length,
-    pending: pendingCount ?? 0,
+    // Wachten op activatie is iets anders dan een rij die aandacht nodig heeft.
+    // Op de TV wil je die twee niet op één hoop.
+    awaiting_activation: (pendingRows ?? []).filter(r => r.reason === 'awaiting_activation').length,
+    needs_attention: (pendingRows ?? []).filter(r => r.reason !== 'awaiting_activation').length,
     days_left: daysLeft,
     needed_per_week: Math.round(neededPerWeek * 10) / 10,
     actual_per_week: Math.round(actualPerWeek * 10) / 10,

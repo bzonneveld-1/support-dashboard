@@ -23,7 +23,8 @@ interface TargetData {
   direct_sales: number;
   support: number;
   canceled: number;
-  pending: number;
+  awaiting_activation: number;
+  needs_attention: number;
   days_left: number;
   needed_per_week: number;
   actual_per_week: number;
@@ -238,11 +239,11 @@ export default function TargetView() {
           />
         </div>
 
-        {/* Waar dit target voor is. In de tekstkleur en niet in Bold-groen,
-            want groen op wit heeft te weinig contrast om te lezen. */}
+        {/* Waar dit target voor is. Bold-groen is op wit dun en bleek, dus
+            zwaar gezet en met een donkere variant in lichte modus. */}
         <div className="absolute top-[3.5%] left-[5%] z-20">
           <div
-            className="font-semibold text-[var(--dash-text)]"
+            className="target-title font-bold"
             style={{ fontSize: 'min(3vh, 1.6vw)', letterSpacing: '-0.025em' }}
           >
             Foosball target
@@ -413,9 +414,13 @@ export default function TargetView() {
             {/* Alleen tonen als er iets te melden valt. Een vaste "alles in
                 orde"-regel is ruis op een scherm dat de hele dag aanstaat. */}
             <span className="justify-self-center" style={{ letterSpacing: '0.06em' }}>
-              {data.pending > 0 && `${data.pending} ${data.pending === 1 ? 'row' : 'rows'} awaiting activation`}
-              {data.pending > 0 && data.canceled > 0 && '   ·   '}
-              {data.canceled > 0 && `${data.canceled} canceled`}
+              {[
+                data.awaiting_activation > 0
+                  && `${data.awaiting_activation} ${data.awaiting_activation === 1 ? 'order' : 'orders'} awaiting subscription activation`,
+                data.needs_attention > 0
+                  && `${data.needs_attention} ${data.needs_attention === 1 ? 'row needs' : 'rows need'} attention`,
+                data.canceled > 0 && `${data.canceled} canceled`,
+              ].filter(Boolean).join('   ·   ')}
             </span>
             <span className="justify-self-end" style={{ letterSpacing: '0.06em' }}>
               {lastSync ? `Updated ${lastSync}` : 'Not synced yet'} &nbsp;·&nbsp; {data.refresh_label}

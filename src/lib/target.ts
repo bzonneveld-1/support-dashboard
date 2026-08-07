@@ -38,6 +38,13 @@ export interface ClaimLookup {
   created_at?: string;
 }
 
+/** Abonnementen op een e-mailadres die buiten het target-venster vallen. */
+export interface EmailLookup {
+  display_id: number;
+  status: string;
+  created_at: string;
+}
+
 export interface SyncInput {
   medusa_ok: boolean;
   sheet_ok: boolean;
@@ -48,6 +55,9 @@ export interface SyncInput {
   ds_customers: Record<string, string>;
   claims: Claim[];
   claim_lookups?: Record<string, ClaimLookup>;
+  /** e-mailadres → abonnementen erbuiten, om "bestaat niet" te onderscheiden
+   *  van "bestaat wel maar viel buiten de periode". */
+  email_lookups?: Record<string, EmailLookup[]>;
 }
 
 export interface ExistingSub {
@@ -301,10 +311,30 @@ export function reconcile(
 
     if (candidates.length === 0) {
       const bad = badNumberByRow.get(claim.row);
+      const note = bad ? `. Note, ${bad} is not a subscription number` : '';
+
+      // Bestaat er wél een abonnement op dit adres, maar buiten de periode?
+      // Dat is iets heel anders dan "nog niet geactiveerd", en zonder dat
+      // onderscheid blijft iemand wachten op iets dat er al is.
+      const outside = (input.email_lookups?.[email] ?? [])
+        .slice()
+        .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+
+      if (outside.length > 0) {
+        const o = outside[0];
+        const before = Date.parse(o.created_at) < startMs;
+        rowStatuses.push({
+          row: claim.row,
+          text: `⚠️ #${o.display_id} exists on this email but started on ${fmtDay(o.created_at)}, `
+            + `${before ? 'before the start date' : 'outside the target window'}, so it does not count${note}`,
+        });
+        pending.push({ sheet_row: claim.row, raw: claim, reason: 'before_start', updated_at: nowIso });
+        continue;
+      }
+
       rowStatuses.push({
         row: claim.row,
-        text: '⏳ Waiting for activation, no subscription on this email address yet'
-          + (bad ? `. Note, ${bad} is not a subscription number` : ''),
+        text: '⏳ Waiting for activation, no subscription on this email address yet' + note,
       });
       pending.push({ sheet_row: claim.row, raw: claim, reason: 'awaiting_activation', updated_at: nowIso });
       continue;

@@ -250,6 +250,29 @@ check('datum onleesbaar', parseClaimDate('gisteren') === null);
   check('september-claim pakt de september-sub', r.rows.find(x => x.display_id === 21)?.sheet_row === 3);
 }
 
+// ── Abonnement bestaat maar valt buiten de periode ────────────────────
+console.log('\nabonnement buiten de periode');
+{
+  // Het echte geval, sub #1306 op 6 aug terwijl het target op 7 aug begint.
+  const r = reconcile(input({
+    claims: [{ row: 2, agent: 'Bas', email: 'k@x.nl', sub_number: '110905' }],
+    email_lookups: { 'k@x.nl': [{ display_id: 1306, status: 'active', created_at: '2026-08-06T10:38:03Z' }] },
+  }), noExisting(), CONFIG, NOW);
+  const t = r.rowStatuses[0]?.text ?? '';
+  check('meldt dat het abonnement al bestaat', /#1306 exists on this email/.test(t), t);
+  check('meldt dat het voor de startdatum is', /before the start date/.test(t), t);
+  check('zegt niet meer dat het op activatie wacht', !/Waiting for activation/.test(t), t);
+  check('telt als before_start', r.pending[0]?.reason === 'before_start', r.pending);
+}
+{
+  // Geen abonnement bekend, dan blijft het gewoon wachten.
+  const r = reconcile(input({
+    claims: [{ row: 2, agent: 'Bas', email: 'k@x.nl' }],
+    email_lookups: { 'k@x.nl': [] },
+  }), noExisting(), CONFIG, NOW);
+  check('zonder abonnement blijft het wachten', /Waiting for activation/.test(r.rowStatuses[0]?.text ?? ''), r.rowStatuses);
+}
+
 // ── Lege rijen ─────────────────────────────────────────────────────────
 console.log('\nlege rijen');
 {

@@ -101,6 +101,12 @@ html[data-tv] td, html[data-tv] th { padding: 4px !important; }
 /* Hairline rand rond de kaart, oogt strakker op een groot scherm */
 .target-card { border: 1px solid var(--dash-border); }
 
+/* Bold-groen is fel bedoeld voor donkere vlakken. Op wit is het te bleek om
+   te lezen, dus daar een donkerder groen uit dezelfde familie. */
+.target-title { color: #0E9B2C; }
+@media (prefers-color-scheme: dark) { .target-title { color: #1CF84C; } }
+html[data-tv] .target-title { color: #1CF84C; }
+
 /* Op de TV is de balk bijzaak. De kinderen gebruiken rem, dus die kijken naar
    de root van 48px en niet naar deze parent. Daarom expliciet overschrijven,
    anders duwt de titel het logo over de tabs heen. */

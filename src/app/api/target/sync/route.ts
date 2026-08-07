@@ -38,6 +38,11 @@ const UpsertSchema = z.object({
     status: z.string().optional(),
     created_at: z.string().optional(),
   })).optional(),
+  email_lookups: z.record(z.array(z.object({
+    display_id: z.number().int(),
+    status: z.string(),
+    created_at: z.string(),
+  }))).optional(),
 });
 
 const ReadKnownSchema = z.object({ action: z.literal('read_known') });
