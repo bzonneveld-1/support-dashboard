@@ -238,19 +238,14 @@ export default function TargetView() {
           />
         </div>
 
-        {/* Waar dit target voor is. Zonder deze regel is het een kaal getal. */}
+        {/* Waar dit target voor is. In de tekstkleur en niet in Bold-groen,
+            want groen op wit heeft te weinig contrast om te lezen. */}
         <div className="absolute top-[3.5%] left-[5%] z-20">
           <div
-            className="uppercase"
-            style={{ fontSize: 'min(1.5vh, 0.8vw)', letterSpacing: '0.28em', color: SOURCE_COLOR.support }}
+            className="font-semibold text-[var(--dash-text)]"
+            style={{ fontSize: 'min(3vh, 1.6vw)', letterSpacing: '-0.025em' }}
           >
             Foosball target
-          </div>
-          <div
-            className="text-[var(--dash-text)] opacity-70"
-            style={{ fontSize: 'min(2.1vh, 1.12vw)', marginTop: '0.55em', letterSpacing: '-0.01em' }}
-          >
-            Bold pays the second half of the foosball table at 100
           </div>
         </div>
 

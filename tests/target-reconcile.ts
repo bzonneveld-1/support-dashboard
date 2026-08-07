@@ -97,6 +97,24 @@ console.log('\nkoppelen op e-mail');
   }), noExisting(), CONFIG, NOW);
   check('fout nummer zonder e-mail geeft fout', /does not exist in Medusa/.test(r.rowStatuses[0]?.text ?? ''), r.rowStatuses);
 }
+{
+  // Iemand plakt een ordernummer. De terugval op e-mail mag dat niet verzwijgen.
+  const r = reconcile(input({
+    claims: [{ row: 2, agent: 'Bas', email: 'nog.niet@example.nl', sub_number: '110885' }],
+  }), noExisting(), CONFIG, NOW);
+  const t = r.rowStatuses[0]?.text ?? '';
+  check('wacht op activatie én meldt het foute nummer',
+    /Waiting for activation/.test(t) && /#110885 is not a subscription number/.test(t), t);
+}
+{
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 7, customer_email: 'k@x.nl' })],
+    claims: [{ row: 2, agent: 'Bas', email: 'k@x.nl', sub_number: '110885' }],
+  }), noExisting(), CONFIG, NOW);
+  const t = r.rowStatuses[0]?.text ?? '';
+  check('koppelt op e-mail én meldt het foute nummer',
+    /Linked by email/.test(t) && /#110885 is not a subscription number/.test(t), t);
+}
 
 // ── Venster ────────────────────────────────────────────────────────────
 console.log('\nvenster');

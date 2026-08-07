@@ -215,6 +215,10 @@ export function reconcile(
 
   // Ronde 1: claims met een expliciet nummer of Medusa-id.
   const unresolvedByNumber: Claim[] = [];
+  // Rijen waarvan het ingevulde nummer nergens op sloeg. Die val je anders
+  // stilzwijgend terug op het e-mailadres, en dan leert niemand dat hij een
+  // ordernummer heeft geplakt in plaats van een abonnementsnummer.
+  const badNumberByRow = new Map<number, string>();
   for (const claim of ordered) {
     const subId = normSubId(claim.sub_number);
     const num = normSubNumber(claim.sub_number);
@@ -237,6 +241,7 @@ export function reconcile(
       } else {
         // Nummer klopt niet. Als er een e-mailadres staat, alsnog via e-mail proberen.
         if (normEmail(claim.email)) {
+          badNumberByRow.set(claim.row, label);
           unresolvedByNumber.push({ ...claim, sub_number: '' });
         } else {
           rowStatuses.push({ row: claim.row, text: `❌ ${label} does not exist in Medusa, check the number` });
@@ -295,7 +300,12 @@ export function reconcile(
       });
 
     if (candidates.length === 0) {
-      rowStatuses.push({ row: claim.row, text: '⏳ Waiting for activation, no subscription on this email address yet' });
+      const bad = badNumberByRow.get(claim.row);
+      rowStatuses.push({
+        row: claim.row,
+        text: '⏳ Waiting for activation, no subscription on this email address yet'
+          + (bad ? `. Note, ${bad} is not a subscription number` : ''),
+      });
       pending.push({ sheet_row: claim.row, raw: claim, reason: 'awaiting_activation', updated_at: nowIso });
       continue;
     }
@@ -366,7 +376,12 @@ export function reconcile(
       } else if (!live) {
         rowStatuses.push({ row: claim.row, text: `📉 ${label} was canceled${canceledAt ? ` on ${fmtDay(canceledAt)}` : ''}, no longer counts` });
       } else if (viaEmail) {
-        rowStatuses.push({ row: claim.row, text: `✅ Linked by email, ${label}, counts` });
+        const bad = badNumberByRow.get(claim.row);
+        rowStatuses.push({
+          row: claim.row,
+          text: `✅ Linked by email, ${label}, counts`
+            + (bad ? `. Note, ${bad} is not a subscription number` : ''),
+        });
       } else {
         rowStatuses.push({ row: claim.row, text: `✅ Counts, ${label}, ${sub.status}` });
       }
