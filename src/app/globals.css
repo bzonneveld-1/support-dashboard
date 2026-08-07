@@ -102,8 +102,8 @@ html[data-tv] td, html[data-tv] th { padding: 4px !important; }
 .target-card { border: 1px solid var(--dash-border); }
 
 /* Bold-groen is fel bedoeld voor donkere vlakken. Op wit is het te bleek om
-   te lezen, dus daar een donkerder groen uit dezelfde familie. */
-.target-title { color: #0E9B2C; }
+   te lezen, dus daar zwart, en op donker het echte Bold-groen. */
+.target-title { color: var(--dash-text); }
 @media (prefers-color-scheme: dark) { .target-title { color: #1CF84C; } }
 html[data-tv] .target-title { color: #1CF84C; }
 

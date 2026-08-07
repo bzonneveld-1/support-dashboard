@@ -47,6 +47,7 @@ export async function GET() {
     display_id: r.display_id,
     source: r.source,
     agent: r.agent,
+    created_at: r.sub_created_at,
     counted_at: r.first_counted_at,
   }));
 
@@ -72,7 +73,10 @@ export async function GET() {
   const startMs = Date.parse(start);
   const msPerDay = 86_400_000;
   const daysLeft = Math.max(0, Math.ceil((endMs - now.getTime()) / msPerDay));
-  const daysElapsed = Math.max(1, (now.getTime() - startMs) / msPerDay);
+  // Minstens een volle week, anders extrapoleert een halve week naar een
+  // weektempo dat hoger ligt dan het totaal en dat leest als onzin. In week
+  // één is het tempo dus gewoon wat er tot nu toe binnen is.
+  const daysElapsed = Math.max(7, (now.getTime() - startMs) / msPerDay);
 
   const total = live.length;
   const remaining = Math.max(0, goal - total);

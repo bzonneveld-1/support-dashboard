@@ -14,6 +14,7 @@ interface CountedSub {
   display_id: number;
   source: 'direct_sales' | 'support';
   agent: string | null;
+  created_at: string;
   counted_at: string | null;
 }
 
@@ -202,9 +203,14 @@ export default function TargetView() {
   }
 
   const pct = data.goal > 0 ? Math.min(1, data.total / data.goal) : 0;
+  // Nieuwste abonnement bovenaan, oudere zakken. Op de aanmaakdatum en niet op
+  // het moment dat de bot hem oppikte, want bij de eerste run krijgt alles
+  // hetzelfde oppikmoment en staat de volgorde er willekeurig doorheen.
+  // Acht past ruim binnen de kolomhoogte op 1080p, naast de andere blokken.
   const recent = [...data.counted]
-    .sort((a, b) => (b.counted_at ?? '').localeCompare(a.counted_at ?? ''))
-    .slice(0, 4);
+    .sort((a, b) => b.created_at.localeCompare(a.created_at)
+      || (b.counted_at ?? '').localeCompare(a.counted_at ?? ''))
+    .slice(0, 8);
 
   const R = 46;
   const C = 2 * Math.PI * R;
@@ -391,7 +397,7 @@ export default function TargetView() {
                         <span className="text-[#8E8E93] truncate flex-1">
                           {sub.agent ?? SOURCE_LABEL[sub.source]}
                         </span>
-                        <span className="text-[#6E6E73] flex-shrink-0">{fmtDay(sub.counted_at)}</span>
+                        <span className="text-[#6E6E73] flex-shrink-0">{fmtDay(sub.created_at)}</span>
                       </div>
                     ))}
                   </div>
