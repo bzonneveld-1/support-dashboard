@@ -171,8 +171,38 @@ console.log('\nannuleren');
     subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
     ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
   }), noExisting(), CONFIG, NOW);
-  check('requires_action telt niet mee', r.counts.total === 0, r.counts);
+  check('requires_action telt niet mee als hij nooit liep', r.counts.total === 0, r.counts);
   check('requires_action geeft geen waarschuwing', r.warnings.length === 0, r.warnings);
+  check('en heet niet geannuleerd, hij liep nooit', r.counts.canceled === 0, r.counts);
+  check('en krijgt geen annuleerdatum', r.rows[0].canceled_detected_at === null, r.rows[0]);
+}
+{
+  // Wel al geteld en dan naar requires_action. Dat is een betaling die klemt
+  // bij een bestaande klant, geen verloren abonnement.
+  const existing = new Map<string, ExistingSub>([['sub_a', {
+    sub_id: 'sub_a', source: 'direct_sales', status: 'live',
+    first_counted_at: '2026-08-10T10:00:00Z', canceled_detected_at: null,
+    agent: null, hubspot_url: null, sheet_row: null,
+  }]]);
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
+    ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
+  }), existing, CONFIG, NOW);
+  check('al getelde sub blijft tellen bij requires_action', r.counts.total === 1, r.counts);
+  check('en krijgt geen annuleerdatum', r.rows[0].canceled_detected_at === null, r.rows[0]);
+}
+{
+  // Alleen een echte annulering haalt hem eruit, ook al telde hij al mee.
+  const existing = new Map<string, ExistingSub>([['sub_a', {
+    sub_id: 'sub_a', source: 'direct_sales', status: 'live',
+    first_counted_at: '2026-08-10T10:00:00Z', canceled_detected_at: null,
+    agent: null, hubspot_url: null, sheet_row: null,
+  }]]);
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, status: 'canceled' })],
+    ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
+  }), existing, CONFIG, NOW);
+  check('canceled haalt hem er wel uit', r.counts.total === 0 && r.counts.canceled === 1, r.counts);
 }
 {
   const r = reconcile(input({

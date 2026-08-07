@@ -88,7 +88,9 @@ export async function GET() {
     total,
     direct_sales: live.filter(r => r.source === 'direct_sales').length,
     support: live.filter(r => r.source === 'support').length,
-    canceled: rows.filter(r => r.status === 'canceled').length,
+    // Geannuleerd betekent hier "telde mee en is er weer af". Een abonnement
+    // dat nooit gelopen heeft valt hier niet onder.
+    canceled: rows.filter(r => r.status === 'canceled' && r.canceled_detected_at).length,
     // Wachten op activatie is iets anders dan een rij die aandacht nodig heeft.
     // Op de TV wil je die twee niet op één hoop.
     awaiting_activation: (pendingRows ?? []).filter(r => r.reason === 'awaiting_activation').length,

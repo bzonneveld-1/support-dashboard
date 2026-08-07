@@ -7,13 +7,16 @@
 export const LIVE_STATUSES = ['active', 'onboarding', 'on_hold'];
 
 /**
- * Statussen waarvan we weten dat ze niet lopen, zodat ze geen waarschuwing
- * geven. `requires_action` betekent in Medusa dat het mandaat nooit rond kwam,
- * en die blijven maanden hangen. De oudste staat er ruim een jaar in. Het is
- * dus geen betaalhapering van een lopend abonnement, maar een abonnement dat
- * nooit van de grond kwam.
+ * Statussen die we kennen maar die niet vanzelf meetellen, zodat ze geen
+ * waarschuwing geven.
+ *
+ * `requires_action` heeft twee betekenissen die je alleen uit de historie kunt
+ * afleiden. Bij een abonnement dat nooit gelopen heeft is het mandaat nooit
+ * rond gekomen, die blijven maanden tot jaren hangen. Bij een abonnement dat
+ * al meetelde is het een betaling die klemt bij een bestaande klant, en dan
+ * blijft het een gewonnen abonnement. Zie de telregel in reconcile.
  */
-export const DEAD_STATUSES = ['canceled', 'requires_action'];
+export const KNOWN_STATUSES = ['canceled', 'requires_action'];
 
 export const DIRECT_SALES_CHANNEL_ID = 'sc_01KF3DQN5QAH44ACQKRBJ6N15K';
 
@@ -202,7 +205,7 @@ export function reconcile(
 
   // Onbekende Medusa-statussen niet stilzwijgend als live tellen.
   for (const s of input.subs) {
-    if (!isLive(s.status) && !DEAD_STATUSES.includes(s.status)) {
+    if (!isLive(s.status) && !KNOWN_STATUSES.includes(s.status)) {
       warnings.push(`Unknown status "${s.status}" on #${s.display_id}, treated as not live`);
     }
   }
@@ -361,7 +364,17 @@ export function reconcile(
   for (const sub of input.subs) {
     const createdMs = Date.parse(sub.created_at);
     const inWindow = createdMs >= startMs && createdMs <= endMs;
-    const live = isLive(sub.status);
+    const prevRow = existing.get(sub.id);
+
+    // Alleen een echte annulering haalt een abonnement uit de telling. Een
+    // status als requires_action telt niet mee als het abonnement nooit
+    // gelopen heeft, want dan is het mandaat nooit rond gekomen. Telde hij al
+    // wel mee, dan is het een betaling die klemt bij een bestaande klant en
+    // blijft het gewoon een gewonnen abonnement.
+    const canceled = sub.status === 'canceled';
+    const everCounted = prevRow?.first_counted_at != null;
+    const live = !canceled && (isLive(sub.status) || everCounted);
+
     const claim = claimBySubId.get(sub.id);
     const dsOrderAt = sub.customer_id ? input.ds_customers[sub.customer_id] ?? null : null;
 
@@ -371,14 +384,15 @@ export function reconcile(
       else if (dsOrderAt) source = 'direct_sales';
     }
 
-    const prev = existing.get(sub.id);
     const counting = source !== null && live;
 
-    let firstCountedAt = prev?.first_counted_at ?? null;
+    let firstCountedAt = prevRow?.first_counted_at ?? null;
     if (counting && !firstCountedAt) firstCountedAt = nowIso;
 
-    let canceledAt = prev?.canceled_detected_at ?? null;
-    if (!live && source !== null && !canceledAt) canceledAt = nowIso;
+    // Alleen een abonnement dat écht meetelde kan daarna wegvallen. Een
+    // abonnement dat nooit liep is niet geannuleerd, het is er nooit gekomen.
+    let canceledAt = prevRow?.canceled_detected_at ?? null;
+    if (!live && everCounted && !canceledAt) canceledAt = nowIso;
 
     rows.push({
       sub_id: sub.id,
@@ -402,7 +416,7 @@ export function reconcile(
       counts.total += 1;
       if (source === 'direct_sales') counts.direct_sales += 1;
       else counts.support += 1;
-    } else if (source !== null && !live) {
+    } else if (source !== null && !live && everCounted) {
       counts.canceled += 1;
     }
 
