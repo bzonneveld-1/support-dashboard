@@ -8,6 +8,9 @@ const POLL_MS = 15_000;
 
 const SOURCE_COLOR = { direct_sales: '#0A84FF', support: '#1CF84C' } as const;
 const SOURCE_LABEL = { direct_sales: 'Direct Sales', support: 'Support' } as const;
+// Tekstkleur op het gekleurde vlak van de melding. Bold-groen is zo licht dat
+// alleen zwart er leesbaar op is, het blauw is juist te donker voor zwart.
+const SOURCE_INK = { direct_sales: '#FFFFFF', support: '#000000' } as const;
 
 interface CountedSub {
   sub_id: string;
@@ -41,6 +44,7 @@ interface Banner {
   title: string;
   subtitle: string;
   color: string;
+  ink: string;
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -145,6 +149,7 @@ export default function TargetView() {
               title: SOURCE_LABEL[sub.source],
               subtitle: [sub.agent, `#${sub.display_id}`].filter(Boolean).join('  ·  '),
               color: SOURCE_COLOR[sub.source],
+              ink: SOURCE_INK[sub.source],
             });
             setCelebrate(c => c + 1);
             setFlashId(sub.sub_id);
@@ -158,6 +163,7 @@ export default function TargetView() {
             title: `−${removedCount}`,
             subtitle: removedCount === 1 ? 'subscription canceled' : 'subscriptions canceled',
             color: '#FF453A',
+            ink: '#FFFFFF',
           });
           setDropPulse(p => p + 1);
         }
@@ -269,18 +275,21 @@ export default function TargetView() {
               <span
                 className="flex items-center justify-center rounded-full font-bold tabular-nums"
                 style={{
-                  backgroundColor: 'rgba(0,0,0,0.18)', color: b.kind === 'up' ? '#000' : '#fff',
+                  backgroundColor: b.ink === '#000000' ? 'rgba(0,0,0,0.16)' : 'rgba(255,255,255,0.22)',
+                  color: b.ink,
                   width: '1.9em', height: '1.9em', fontSize: 'clamp(0.7rem, 1.5vh, 1.6rem)',
                 }}
               >
                 {b.kind === 'up' ? '+1' : b.title}
               </span>
-              <span className="flex flex-col leading-tight" style={{ color: b.kind === 'up' ? '#000' : '#fff' }}>
-                <span className="font-semibold tracking-tight" style={{ fontSize: 'clamp(0.8rem, 1.9vh, 2.1rem)' }}>
+              {/* Geen doorzichtigheid op de naam. Op een TV van een paar meter
+                  afstand valt half-transparant zwart op fel groen gewoon weg. */}
+              <span className="flex flex-col leading-tight" style={{ color: b.ink }}>
+                <span className="font-bold tracking-tight" style={{ fontSize: 'clamp(0.8rem, 1.9vh, 2.1rem)' }}>
                   {b.kind === 'up' ? b.title : b.subtitle}
                 </span>
                 {b.kind === 'up' && b.subtitle && (
-                  <span className="font-medium opacity-70" style={{ fontSize: 'clamp(0.6rem, 1.3vh, 1.4rem)' }}>
+                  <span className="font-semibold" style={{ fontSize: 'clamp(0.7rem, 1.55vh, 1.7rem)' }}>
                     {b.subtitle}
                   </span>
                 )}
