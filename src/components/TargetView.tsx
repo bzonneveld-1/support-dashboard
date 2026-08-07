@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { triggerTargetSync } from '@/app/actions';
 import NavHeader from './NavHeader';
 import Confetti from './Confetti';
 
@@ -118,6 +119,7 @@ export default function TargetView() {
   const [celebrate, setCelebrate] = useState(0);
   const [dropPulse, setDropPulse] = useState(0);
   const [flashId, setFlashId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const seenRef = useRef<Set<string> | null>(null);
   const bannerKey = useRef(0);
@@ -183,6 +185,18 @@ export default function TargetView() {
     const timer = setInterval(fetchData, POLL_MS);
     return () => clearInterval(timer);
   }, [fetchData]);
+
+  // De collector nu laten draaien in plaats van te wachten op zijn ronde.
+  const refreshNow = useCallback(async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      await triggerTargetSync();
+      await fetchData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshing, fetchData]);
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).has('tv')) {
@@ -440,8 +454,21 @@ export default function TargetView() {
                 data.canceled > 0 && `${data.canceled} canceled`,
               ].filter(Boolean).join('   ·   ')}
             </span>
-            <span className="justify-self-end" style={{ letterSpacing: '0.06em' }}>
-              {lastSync ? `Updated ${lastSync}` : 'Not synced yet'} &nbsp;·&nbsp; {data.refresh_label}
+            <span className="justify-self-end flex items-center" style={{ letterSpacing: '0.06em', gap: '1.2em' }}>
+              <span>
+                {lastSync ? `Updated ${lastSync}` : 'Not synced yet'} &nbsp;·&nbsp; {data.refresh_label}
+              </span>
+              {/* Wachten tot de volgende ronde duurt een uur, dus een knopje om
+                  het nu te doen. Onschadelijk als iemand er twee keer op drukt,
+                  elke run is een volledige hertelling. */}
+              <button
+                onClick={refreshNow}
+                disabled={refreshing}
+                className="rounded-full border border-[var(--dash-border)] uppercase transition-colors hover:bg-[var(--dash-hover)] disabled:opacity-50"
+                style={{ letterSpacing: '0.18em', padding: '0.5em 1.1em' }}
+              >
+                {refreshing ? 'Refreshing' : 'Refresh now'}
+              </button>
             </span>
           </div>
         </div>

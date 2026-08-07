@@ -17,3 +17,19 @@ export async function triggerBackfill(date: string, timeSlot: string) {
     return { success: false, error: 'Failed to trigger backfill' };
   }
 }
+
+/**
+ * Laat de collector nu draaien in plaats van te wachten op zijn ronde.
+ * Server-side, zodat de webhook-URL niet in de pagina belandt.
+ */
+export async function triggerTargetSync() {
+  const webhookUrl = process.env.N8N_SUBS_TARGET_WEBHOOK_URL
+    ?? 'https://havenka.app.n8n.cloud/webhook/sd-subs-target';
+
+  try {
+    const res = await fetch(webhookUrl, { cache: 'no-store' });
+    return { success: res.ok };
+  } catch {
+    return { success: false };
+  }
+}
