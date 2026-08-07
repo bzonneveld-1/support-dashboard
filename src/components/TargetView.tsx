@@ -225,10 +225,26 @@ export default function TargetView() {
           />
         </div>
 
+        {/* Waar dit target voor is. Zonder deze regel is het een kaal getal. */}
+        <div className="absolute top-[3.5%] left-[5%] z-20">
+          <div
+            className="uppercase"
+            style={{ fontSize: 'min(1.5vh, 0.8vw)', letterSpacing: '0.28em', color: SOURCE_COLOR.support }}
+          >
+            Foosball target
+          </div>
+          <div
+            className="text-[var(--dash-text)] opacity-70"
+            style={{ fontSize: 'min(2.1vh, 1.12vw)', marginTop: '0.55em', letterSpacing: '-0.01em' }}
+          >
+            Bold pays the second half of the foosball table at 100
+          </div>
+        </div>
+
         {/* Meldingen. Gecentreerd boven de ring en niet boven het scherm, want
             in het midden dekken ze precies de cijfers af die net veranderden.
             26,5% is het hart van de linkerkolom van het raster hieronder. */}
-        <div className="absolute top-[4%] left-[26.5%] -translate-x-1/2 z-30 flex flex-col items-center gap-[0.5em] pointer-events-none">
+        <div className="absolute top-[13%] left-[26.5%] -translate-x-1/2 z-30 flex flex-col items-center gap-[0.5em] pointer-events-none">
           {banners.map(b => (
             <div
               key={b.key}
@@ -383,11 +399,12 @@ export default function TargetView() {
             <span className="uppercase" style={{ letterSpacing: '0.22em' }}>
               H2 2026
             </span>
+            {/* Alleen tonen als er iets te melden valt. Een vaste "alles in
+                orde"-regel is ruis op een scherm dat de hele dag aanstaat. */}
             <span style={{ letterSpacing: '0.06em' }}>
               {data.pending > 0 && `${data.pending} ${data.pending === 1 ? 'row' : 'rows'} awaiting activation`}
               {data.pending > 0 && data.canceled > 0 && '   ·   '}
               {data.canceled > 0 && `${data.canceled} canceled`}
-              {data.pending === 0 && data.canceled === 0 && 'all rows linked'}
             </span>
           </div>
         </div>
