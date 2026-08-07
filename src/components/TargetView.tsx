@@ -428,8 +428,11 @@ export default function TargetView() {
             </span>
             {/* Alleen tonen als er iets te melden valt. Een vaste "alles in
                 orde"-regel is ruis op een scherm dat de hele dag aanstaat. */}
+            {/* Eén keer benoemen waar die rijen staan, anders weet niemand op
+                de TV waar hij iets moet gaan rechtzetten. */}
             <span className="justify-self-center" style={{ letterSpacing: '0.06em' }}>
               {[
+                (data.awaiting_activation > 0 || data.needs_attention > 0) && 'Support sheet',
                 data.awaiting_activation > 0
                   && `${data.awaiting_activation} ${data.awaiting_activation === 1 ? 'order' : 'orders'} awaiting subscription activation`,
                 data.needs_attention > 0
