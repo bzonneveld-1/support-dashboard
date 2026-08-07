@@ -52,7 +52,14 @@ function dec(n: number): string {
   return n.toFixed(1).replace('.', ',');
 }
 
-/** Telt zichtbaar op naar de nieuwe waarde in plaats van te springen. */
+/**
+ * Telt zichtbaar op naar de nieuwe waarde in plaats van te springen.
+ *
+ * requestAnimationFrame staat volledig stil zolang het tabblad verborgen is,
+ * dus de lus alleen is niet genoeg. Een timer zet het eindgetal er hoe dan ook
+ * neer, anders blijft de teller op de vorige stand hangen terwijl de rest van
+ * het scherm al bijgewerkt is.
+ */
 function useCountUp(target: number, durationMs = 1100): number {
   const [value, setValue] = useState(target);
   const fromRef = useRef(target);
@@ -60,6 +67,7 @@ function useCountUp(target: number, durationMs = 1100): number {
   useEffect(() => {
     const from = fromRef.current;
     if (from === target) return;
+
     let raf = 0;
     const startedAt = performance.now();
     const tick = (t: number) => {
@@ -70,7 +78,16 @@ function useCountUp(target: number, durationMs = 1100): number {
       else fromRef.current = target;
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    const settle = setTimeout(() => {
+      setValue(target);
+      fromRef.current = target;
+    }, durationMs + 150);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(settle);
+    };
   }, [target, durationMs]);
 
   return value;
@@ -208,8 +225,10 @@ export default function TargetView() {
           />
         </div>
 
-        {/* Meldingen */}
-        <div className="absolute top-[4%] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-[0.5em] pointer-events-none">
+        {/* Meldingen. Gecentreerd boven de ring en niet boven het scherm, want
+            in het midden dekken ze precies de cijfers af die net veranderden.
+            26,5% is het hart van de linkerkolom van het raster hieronder. */}
+        <div className="absolute top-[4%] left-[26.5%] -translate-x-1/2 z-30 flex flex-col items-center gap-[0.5em] pointer-events-none">
           {banners.map(b => (
             <div
               key={b.key}
@@ -254,12 +273,16 @@ export default function TargetView() {
               >
                 <svg viewBox="0 0 120 120" className="absolute inset-0 -rotate-90 w-full h-full overflow-visible">
                   <circle cx="60" cy="60" r={R} fill="none" stroke="var(--dash-border)" strokeWidth="4" />
-                  <circle
-                    cx="60" cy="60" r={R} fill="none"
-                    stroke="url(#targetGrad)" strokeWidth="4" strokeLinecap="round"
-                    strokeDasharray={`${pct * C} ${C}`}
-                    style={{ transition: 'stroke-dasharray 1100ms cubic-bezier(0.16, 1, 0.3, 1)' }}
-                  />
+                  {/* Bij nul geen boog tekenen, anders blijft de ronde
+                      lijnkap als los puntje staan. */}
+                  {pct > 0 && (
+                    <circle
+                      cx="60" cy="60" r={R} fill="none"
+                      stroke="url(#targetGrad)" strokeWidth="4" strokeLinecap="round"
+                      strokeDasharray={`${pct * C} ${C}`}
+                      style={{ transition: 'stroke-dasharray 1100ms cubic-bezier(0.16, 1, 0.3, 1)' }}
+                    />
+                  )}
                   <defs>
                     <linearGradient id="targetGrad" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor={SOURCE_COLOR.direct_sales} />
@@ -297,16 +320,22 @@ export default function TargetView() {
                 <div className="flex flex-col" style={{ gap: 'min(1.5vh, 0.8vw)' }}>
                   <SourceRow label={SOURCE_LABEL.direct_sales} value={data.direct_sales} color={SOURCE_COLOR.direct_sales} />
                   <SourceRow label={SOURCE_LABEL.support} value={data.support} color={SOURCE_COLOR.support} />
+                  {/* Zonder abonnementen is er niets te verdelen, dan alleen
+                      de lege baan. Anders zou hij volledig groen kleuren. */}
                   <div className="flex h-[0.55em] w-full overflow-hidden rounded-full bg-[var(--dash-border)]"
                        style={{ fontSize: 'min(2.4vh, 1.3vw)', marginTop: '0.3em' }}>
-                    <div style={{
-                      width: `${dsShare * 100}%`, backgroundColor: SOURCE_COLOR.direct_sales,
-                      transition: 'width 1100ms cubic-bezier(0.16, 1, 0.3, 1)',
-                    }} />
-                    <div style={{
-                      width: `${(1 - dsShare) * 100}%`, backgroundColor: SOURCE_COLOR.support,
-                      transition: 'width 1100ms cubic-bezier(0.16, 1, 0.3, 1)',
-                    }} />
+                    {data.total > 0 && (
+                      <>
+                        <div style={{
+                          width: `${dsShare * 100}%`, backgroundColor: SOURCE_COLOR.direct_sales,
+                          transition: 'width 1100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        }} />
+                        <div style={{
+                          width: `${(1 - dsShare) * 100}%`, backgroundColor: SOURCE_COLOR.support,
+                          transition: 'width 1100ms cubic-bezier(0.16, 1, 0.3, 1)',
+                        }} />
+                      </>
+                    )}
                   </div>
                 </div>
               </Section>

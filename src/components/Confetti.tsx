@@ -36,6 +36,13 @@ export default function Confetti({ trigger }: { trigger: number }) {
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    // Onzichtbaar tabblad, dan staat rAF stil. Niets opbouwen dat toch niemand
+    // ziet en dat zich zou opstapelen tot een wolk bij terugkeer.
+    if (document.hidden) {
+      piecesRef.current = [];
+      return;
+    }
+
     const now = performance.now();
     for (let i = 0; i < PIECES; i++) {
       const angle = (-Math.PI / 2) + (Math.random() - 0.5) * 1.9;
@@ -53,8 +60,6 @@ export default function Confetti({ trigger }: { trigger: number }) {
         born: now,
       });
     }
-
-    if (rafRef.current) return;   // er loopt al een animatielus
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, width, height);
@@ -89,6 +94,10 @@ export default function Confetti({ trigger }: { trigger: number }) {
       }
     };
 
+    // Altijd een verse lus starten. Hergebruiken van een bestaande id is
+    // riskant, want een lus die is opgeschort laat de ref gevuld achter en dan
+    // zou er nooit meer confetti komen zolang de pagina openstaat.
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(draw);
   }, [trigger]);
 
