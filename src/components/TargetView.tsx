@@ -381,7 +381,7 @@ export default function TargetView() {
             style={{ paddingInline: '5%', paddingBlock: 'min(1.6vh, 0.85vw)', fontSize: 'min(1.35vh, 0.72vw)' }}
           >
             <span className="uppercase" style={{ letterSpacing: '0.22em' }}>
-              7 August &ndash; 31 December 2026
+              H2 2026
             </span>
             <span style={{ letterSpacing: '0.06em' }}>
               {data.pending > 0 && `${data.pending} ${data.pending === 1 ? 'row' : 'rows'} awaiting activation`}
