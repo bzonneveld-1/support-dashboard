@@ -28,6 +28,8 @@ interface TargetData {
   needed_per_week: number;
   actual_per_week: number;
   on_track: boolean;
+  last_sync_at: string | null;
+  refresh_label: string;
   counted: CountedSub[];
 }
 
@@ -50,6 +52,16 @@ function fmtDay(iso: string | null): string {
 
 function dec(n: number): string {
   return n.toFixed(1).replace('.', ',');
+}
+
+/** Altijd Nederlandse tijd, ongeacht de klok van de browser op de TV. */
+function fmtTime(iso: string | null): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleTimeString('nl-NL', {
+    timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit',
+  });
 }
 
 /**
@@ -196,6 +208,7 @@ export default function TargetView() {
   const R = 46;
   const C = 2 * Math.PI * R;
   const dsShare = data.total > 0 ? data.direct_sales / data.total : 0;
+  const lastSync = fmtTime(data.last_sync_at);
 
   return (
     <div className="dash-outer h-screen flex flex-col p-5 lg:p-8 bg-[var(--dash-bg)]">
@@ -393,18 +406,24 @@ export default function TargetView() {
 
           {/* Voetregel */}
           <div
-            className="flex items-center justify-between border-t border-[var(--dash-border)] text-[#6E6E73] tabular-nums"
-            style={{ paddingInline: '5%', paddingBlock: 'min(1.6vh, 0.85vw)', fontSize: 'min(1.35vh, 0.72vw)' }}
+            className="grid items-center border-t border-[var(--dash-border)] text-[#6E6E73] tabular-nums"
+            style={{
+              gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
+              paddingInline: '5%', paddingBlock: 'min(1.6vh, 0.85vw)', fontSize: 'min(1.35vh, 0.72vw)',
+            }}
           >
             <span className="uppercase" style={{ letterSpacing: '0.22em' }}>
               H2 2026
             </span>
             {/* Alleen tonen als er iets te melden valt. Een vaste "alles in
                 orde"-regel is ruis op een scherm dat de hele dag aanstaat. */}
-            <span style={{ letterSpacing: '0.06em' }}>
+            <span className="justify-self-center" style={{ letterSpacing: '0.06em' }}>
               {data.pending > 0 && `${data.pending} ${data.pending === 1 ? 'row' : 'rows'} awaiting activation`}
               {data.pending > 0 && data.canceled > 0 && '   ·   '}
               {data.canceled > 0 && `${data.canceled} canceled`}
+            </span>
+            <span className="justify-self-end" style={{ letterSpacing: '0.06em' }}>
+              {lastSync ? `Updated ${lastSync}` : 'Not synced yet'} &nbsp;·&nbsp; {data.refresh_label}
             </span>
           </div>
         </div>

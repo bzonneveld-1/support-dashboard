@@ -123,6 +123,13 @@ export async function POST(request: Request) {
     }
   }
 
+  // Wanneer de cijfers voor het laatst echt opgehaald zijn. Niet af te leiden
+  // uit target_subs, want zonder abonnementen wordt daar niets weggeschreven.
+  await supabase
+    .from('target_config')
+    .upsert({ key: 'last_sync_at', value: new Date().toISOString(), updated_at: new Date().toISOString() },
+            { onConflict: 'key' });
+
   return Response.json({
     ok: true,
     counts: result.counts,

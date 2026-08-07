@@ -36,6 +36,8 @@ export async function GET() {
   const goal = parseInt(config.get('target_goal') ?? '100', 10);
   const start = config.get('target_start') ?? '2026-08-06T22:00:00Z';
   const end = config.get('target_end') ?? '2026-12-31T22:59:59Z';
+  const lastSyncAt = config.get('last_sync_at') ?? null;
+  const refreshLabel = config.get('refresh_label') ?? 'every 5 min';
 
   const rows = (subRows ?? []) as SubRow[];
   const live = rows.filter(r => r.status === 'live');
@@ -88,6 +90,8 @@ export async function GET() {
     needed_per_week: Math.round(neededPerWeek * 10) / 10,
     actual_per_week: Math.round(actualPerWeek * 10) / 10,
     on_track: actualPerWeek >= neededPerWeek,
+    last_sync_at: lastSyncAt,
+    refresh_label: refreshLabel,
     counted,
     series,
   });
