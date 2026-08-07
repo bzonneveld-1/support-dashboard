@@ -165,11 +165,14 @@ console.log('\nannuleren');
   check('oorspronkelijke telldatum blijft', r.rows[0].first_counted_at === '2026-08-20T10:00:00Z');
 }
 {
+  // requires_action betekent hier een mandaat dat nooit rond kwam, die blijven
+  // maanden hangen, dus dat is geen gewonnen abonnement.
   const r = reconcile(input({
     subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
     ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
   }), noExisting(), CONFIG, NOW);
-  check('betaalprobleem blijft meetellen', r.counts.total === 1, r.counts);
+  check('requires_action telt niet mee', r.counts.total === 0, r.counts);
+  check('requires_action geeft geen waarschuwing', r.warnings.length === 0, r.warnings);
 }
 {
   const r = reconcile(input({

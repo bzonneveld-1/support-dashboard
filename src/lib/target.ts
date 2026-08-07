@@ -4,7 +4,16 @@
 // de support-sheet, deze module bepaalt wie meetelt. Elke run is een volledige
 // hertelling, dus annuleringen zakken vanzelf en dubbel draaien is onschadelijk.
 
-export const LIVE_STATUSES = ['active', 'onboarding', 'on_hold', 'requires_action'];
+export const LIVE_STATUSES = ['active', 'onboarding', 'on_hold'];
+
+/**
+ * Statussen waarvan we weten dat ze niet lopen, zodat ze geen waarschuwing
+ * geven. `requires_action` betekent in Medusa dat het mandaat nooit rond kwam,
+ * en die blijven maanden hangen. De oudste staat er ruim een jaar in. Het is
+ * dus geen betaalhapering van een lopend abonnement, maar een abonnement dat
+ * nooit van de grond kwam.
+ */
+export const DEAD_STATUSES = ['canceled', 'requires_action'];
 
 export const DIRECT_SALES_CHANNEL_ID = 'sc_01KF3DQN5QAH44ACQKRBJ6N15K';
 
@@ -193,7 +202,7 @@ export function reconcile(
 
   // Onbekende Medusa-statussen niet stilzwijgend als live tellen.
   for (const s of input.subs) {
-    if (!isLive(s.status) && s.status !== 'canceled') {
+    if (!isLive(s.status) && !DEAD_STATUSES.includes(s.status)) {
       warnings.push(`Unknown status "${s.status}" on #${s.display_id}, treated as not live`);
     }
   }
