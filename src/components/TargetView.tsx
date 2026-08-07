@@ -464,8 +464,11 @@ export default function TargetView() {
               <button
                 onClick={refreshNow}
                 disabled={refreshing}
-                className="rounded-full border border-[var(--dash-border)] uppercase transition-colors hover:bg-[var(--dash-hover)] disabled:opacity-50"
-                style={{ letterSpacing: '0.18em', padding: '0.5em 1.1em' }}
+                className="rounded-full uppercase font-semibold transition-opacity hover:opacity-85 disabled:opacity-50"
+                style={{
+                  backgroundColor: SOURCE_COLOR.support, color: SOURCE_INK.support,
+                  letterSpacing: '0.18em', padding: '0.55em 1.2em',
+                }}
               >
                 {refreshing ? 'Refreshing' : 'Refresh now'}
               </button>
