@@ -227,6 +227,25 @@ console.log('\nannuleren');
   check('en legt die orderdatum vast', r.rows[0].ds_first_order_at === '2026-08-12T00:00:00Z', r.rows[0]);
 }
 {
+  // Maar alleen terugkijken. Een Direct Sales-order van ná het abonnement zegt
+  // niets over dit abonnement, dat kan een tweede verkoop op hetzelfde adres
+  // zijn terwijl deze uit de webshop kwam. Gemeten op #1300.
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, customer_id: 'cus_zonder_order', created_at: '2026-08-10T10:00:00Z' })],
+    ds_emails: { 'k1@example.com': '2026-08-20T00:00:00Z' },
+  }), noExisting(), CONFIG, NOW);
+  check('latere DS-order op het e-mailadres telt niet', r.counts.total === 0 && r.rows[0].source === null, r.counts);
+}
+{
+  // Zelfde dag mag wel, in de Direct Sales-flow komt de order soms seconden na
+  // het abonnement.
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, customer_id: 'cus_zonder_order', created_at: '2026-08-20T09:00:00Z' })],
+    ds_emails: { 'k1@example.com': '2026-08-20T10:00:00Z' },
+  }), noExisting(), CONFIG, NOW);
+  check('DS-order op dezelfde dag telt wel', r.counts.direct_sales === 1, r.counts);
+}
+{
   // customer_id blijft voorgaan, dat is de hardere sleutel.
   const r = reconcile(input({
     subs: [sub({ id: 'sub_a', display_id: 1 })],

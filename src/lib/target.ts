@@ -411,9 +411,20 @@ export function reconcile(
     else live = everCounted;   // status die we niet kennen, alleen als hij al meetelde
 
     const claim = claimBySubId.get(sub.id);
-    const dsOrderAt = (sub.customer_id ? input.ds_customers[sub.customer_id] : null)
-      ?? (sub.customer_email ? input.ds_emails?.[normEmail(sub.customer_email)] : null)
-      ?? null;
+    // customer_id is de harde sleutel, daar mag de order ook later zijn. Dat is
+    // hoe het channel zichzelf omschrijft, herhaalorders van klanten die via
+    // Direct Sales binnenkwamen.
+    //
+    // Het e-mailvangnet is zwakker, dat mag alleen terugkijken. Anders sleept
+    // een latere Direct Sales-order een abonnement mee dat zelf via de webshop
+    // binnenkwam. Gemeten op robert@cs-co.nl, twee klantrecords, #1300 uit de
+    // webshop op 5 aug en een Direct Sales-order op 12 aug voor #1327.
+    const dsById = sub.customer_id ? input.ds_customers[sub.customer_id] ?? null : null;
+    const dsByEmail = sub.customer_email
+      ? input.ds_emails?.[normEmail(sub.customer_email)] ?? null
+      : null;
+    const dsOrderAt = dsById
+      ?? (dsByEmail && dayStart(dsByEmail) <= dayStart(sub.created_at) ? dsByEmail : null);
 
     let source: Source | null = null;
     if (inWindow) {
