@@ -10,13 +10,28 @@ export const LIVE_STATUSES = ['active', 'onboarding', 'on_hold'];
  * Statussen die we kennen maar die niet vanzelf meetellen, zodat ze geen
  * waarschuwing geven.
  *
- * `requires_action` heeft twee betekenissen die je alleen uit de historie kunt
- * afleiden. Bij een abonnement dat nooit gelopen heeft is het mandaat nooit
- * rond gekomen, die blijven maanden tot jaren hangen. Bij een abonnement dat
- * al meetelde is het een betaling die klemt bij een bestaande klant, en dan
- * blijft het een gewonnen abonnement. Zie de telregel in reconcile.
+ * `requires_action` betekent in Bold een stornering, zie de dunning-spec. Dat
+ * heeft twee smaken, en `billed_count` uit Medusa zegt welke.
+ *
+ * - Heeft het abonnement al gefactureerd, dan is het een betalende klant met
+ *   een teruggeboekte incasso. Dat blijft een gewonnen abonnement, dunning
+ *   haalt hem er meestal weer bij.
+ * - Heeft het nog nooit gefactureerd, dan is de eerste incasso nooit
+ *   goedgekomen. Zo wordt elke verkoop via een draft order geboren, dus die
+ *   telt binnen de machtigingstermijn wel mee en daarna niet meer.
+ *
+ * Zie de telregel in reconcile.
  */
 export const KNOWN_STATUSES = ['canceled', 'requires_action'];
+
+/**
+ * Hoe lang een abonnement zonder één geslaagde incasso mag meetellen. Direct
+ * Sales sluit een deal en de klant moet de incasso nog goedkeuren, dus de +1
+ * landt op de verkoopdag. Komt de machtiging binnen deze termijn niet rond,
+ * dan valt hij er weer uit, zodat mandaten die nooit goedkomen de 100 niet
+ * opblazen. Er hangen er in Medusa een paar sinds april 2025.
+ */
+export const MANDATE_GRACE_DAYS = 30;
 
 export const DIRECT_SALES_CHANNEL_ID = 'sc_01KF3DQN5QAH44ACQKRBJ6N15K';
 
@@ -29,6 +44,12 @@ export interface MedusaSub {
   created_at: string;
   customer_id: string | null;
   customer_email: string | null;
+  /**
+   * Aantal facturatie-orders van het abonnement zelf, dus niet de order waaruit
+   * het ontstond. Alleen opgehaald voor abonnementen op `requires_action`, want
+   * daar hangt de telregel ervan af. Onbekend telt als nooit gefactureerd.
+   */
+  billed_count?: number;
 }
 
 export interface Claim {
@@ -65,6 +86,12 @@ export interface SyncInput {
   subs: MedusaSub[];
   /** customer_id → datum van de vroegste Direct Sales order. */
   ds_customers: Record<string, string>;
+  /**
+   * E-mailadres → datum van de vroegste Direct Sales order. Vangnet, want
+   * Medusa heeft soms twee klantrecords op hetzelfde adres en dan hangt het
+   * abonnement aan het record zonder order. Gemeten op robert@cs-co.nl.
+   */
+  ds_emails?: Record<string, string>;
   claims: Claim[];
   claim_lookups?: Record<string, ClaimLookup>;
   /** e-mailadres → abonnementen erbuiten, om "bestaat niet" te onderscheiden
@@ -366,17 +393,27 @@ export function reconcile(
     const inWindow = createdMs >= startMs && createdMs <= endMs;
     const prevRow = existing.get(sub.id);
 
-    // Alleen een echte annulering haalt een abonnement uit de telling. Een
-    // status als requires_action telt niet mee als het abonnement nooit
-    // gelopen heeft, want dan is het mandaat nooit rond gekomen. Telde hij al
-    // wel mee, dan is het een betaling die klemt bij een bestaande klant en
-    // blijft het gewoon een gewonnen abonnement.
+    // Alleen een echte annulering haalt een abonnement direct uit de telling.
+    // Bij een stornering (requires_action) beslist de facturatiehistorie. Heeft
+    // het al gefactureerd, dan is het een betalende klant met een teruggeboekte
+    // incasso en blijft het een gewonnen abonnement. Heeft het nog nooit
+    // gefactureerd, dan telt het alleen zolang de machtigingstermijn loopt.
     const canceled = sub.status === 'canceled';
     const everCounted = prevRow?.first_counted_at != null;
-    const live = !canceled && (isLive(sub.status) || everCounted);
+    const storno = sub.status === 'requires_action';
+    const everBilled = (sub.billed_count ?? 0) > 0;
+    const withinGrace = now.getTime() - createdMs <= MANDATE_GRACE_DAYS * 86_400_000;
+
+    let live: boolean;
+    if (canceled) live = false;
+    else if (isLive(sub.status)) live = true;
+    else if (storno) live = everBilled || withinGrace;
+    else live = everCounted;   // status die we niet kennen, alleen als hij al meetelde
 
     const claim = claimBySubId.get(sub.id);
-    const dsOrderAt = sub.customer_id ? input.ds_customers[sub.customer_id] ?? null : null;
+    const dsOrderAt = (sub.customer_id ? input.ds_customers[sub.customer_id] : null)
+      ?? (sub.customer_email ? input.ds_emails?.[normEmail(sub.customer_email)] : null)
+      ?? null;
 
     let source: Source | null = null;
     if (inWindow) {
@@ -426,6 +463,8 @@ export function reconcile(
       const viaEmail = boundViaEmail.has(sub.id);
       if (!inWindow) {
         rowStatuses.push({ row: claim.row, text: `⚠️ ${label} falls outside the target window, does not count` });
+      } else if (!live && storno && !everBilled) {
+        rowStatuses.push({ row: claim.row, text: `📉 ${label} never got a direct debit through in ${MANDATE_GRACE_DAYS} days, no longer counts` });
       } else if (!live) {
         rowStatuses.push({ row: claim.row, text: `📉 ${label} was canceled${canceledAt ? ` on ${fmtDay(canceledAt)}` : ''}, no longer counts` });
       } else if (viaEmail) {
@@ -435,6 +474,8 @@ export function reconcile(
           text: `✅ Linked by email, ${label}, counts`
             + (bad ? `. Note, ${bad} is not a subscription number` : ''),
         });
+      } else if (storno) {
+        rowStatuses.push({ row: claim.row, text: `✅ Counts, ${label}, waiting for the direct debit` });
       } else {
         rowStatuses.push({ row: claim.row, text: `✅ Counts, ${label}, ${sub.status}` });
       }

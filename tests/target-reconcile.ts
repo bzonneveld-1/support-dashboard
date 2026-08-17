@@ -165,31 +165,75 @@ console.log('\nannuleren');
   check('oorspronkelijke telldatum blijft', r.rows[0].first_counted_at === '2026-08-20T10:00:00Z');
 }
 {
-  // requires_action betekent hier een mandaat dat nooit rond kwam, die blijven
-  // maanden hangen, dus dat is geen gewonnen abonnement.
+  // requires_action is een stornering. Nooit gefactureerd betekent dat de
+  // eerste incasso nog niet goed is gekomen, en zo wordt elke Direct
+  // Sales-verkoop via een draft order geboren. Die telt binnen de termijn mee,
+  // gemeten op #1309 Fairfield College.
   const r = reconcile(input({
     subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
     ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
   }), noExisting(), CONFIG, NOW);
-  check('requires_action telt niet mee als hij nooit liep', r.counts.total === 0, r.counts);
+  check('verse stornering telt mee binnen de machtigingstermijn', r.counts.total === 1, r.counts);
   check('requires_action geeft geen waarschuwing', r.warnings.length === 0, r.warnings);
+}
+{
+  // Na de termijn valt hij eruit, anders blijven mandaten die nooit goedkomen
+  // voor altijd als gewonnen staan. Er hangen er in Medusa een paar sinds 2025.
+  const LATER = new Date('2026-10-01T10:00:00Z');
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
+    ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
+  }), noExisting(), CONFIG, LATER);
+  check('stornering zonder factuur valt na 30 dagen weg', r.counts.total === 0, r.counts);
   check('en heet niet geannuleerd, hij liep nooit', r.counts.canceled === 0, r.counts);
   check('en krijgt geen annuleerdatum', r.rows[0].canceled_detected_at === null, r.rows[0]);
 }
 {
-  // Wel al geteld en dan naar requires_action. Dat is een betaling die klemt
-  // bij een bestaande klant, geen verloren abonnement.
+  // Telde hij al mee en komt de machtiging alsnog niet rond, dan zakt de teller
+  // wel, met een annuleerdatum zodat de dagreeks een −1 laat zien.
+  const LATER = new Date('2026-10-01T10:00:00Z');
   const existing = new Map<string, ExistingSub>([['sub_a', {
     sub_id: 'sub_a', source: 'direct_sales', status: 'live',
-    first_counted_at: '2026-08-10T10:00:00Z', canceled_detected_at: null,
+    first_counted_at: '2026-08-20T11:00:00Z', canceled_detected_at: null,
     agent: null, hubspot_url: null, sheet_row: null,
   }]]);
   const r = reconcile(input({
     subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action' })],
     ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
-  }), existing, CONFIG, NOW);
-  check('al getelde sub blijft tellen bij requires_action', r.counts.total === 1, r.counts);
+  }), existing, CONFIG, LATER);
+  check('verlopen machtiging trekt een getelde sub eruit', r.counts.total === 0 && r.counts.canceled === 1, r.counts);
+  check('en zet een annuleerdatum voor de −1', r.rows[0].canceled_detected_at === LATER.toISOString(), r.rows[0]);
+}
+{
+  // Heeft het abonnement al gefactureerd, dan is de stornering een teruggeboekte
+  // incasso bij een betalende klant. Dat blijft een gewonnen abonnement, ook
+  // lang na de termijn en ook als wij hem nooit als lopend gezien hebben.
+  const LATER = new Date('2026-10-01T10:00:00Z');
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, status: 'requires_action', billed_count: 2 })],
+    ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
+  }), noExisting(), CONFIG, LATER);
+  check('stornering bij een betalende klant blijft tellen', r.counts.total === 1, r.counts);
   check('en krijgt geen annuleerdatum', r.rows[0].canceled_detected_at === null, r.rows[0]);
+}
+{
+  // Medusa heeft soms twee klantrecords op hetzelfde adres, en dan hangt het
+  // abonnement aan het record zonder Direct Sales-order. Gemeten op #1300.
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1, customer_id: 'cus_zonder_order', customer_email: 'Robert@CS-CO.nl' })],
+    ds_emails: { 'robert@cs-co.nl': '2026-08-12T00:00:00Z' },
+  }), noExisting(), CONFIG, NOW);
+  check('DS-order op hetzelfde e-mailadres telt ook', r.counts.direct_sales === 1, r.counts);
+  check('en legt die orderdatum vast', r.rows[0].ds_first_order_at === '2026-08-12T00:00:00Z', r.rows[0]);
+}
+{
+  // customer_id blijft voorgaan, dat is de hardere sleutel.
+  const r = reconcile(input({
+    subs: [sub({ id: 'sub_a', display_id: 1 })],
+    ds_customers: { cus_1: '2026-06-02T00:00:00Z' },
+    ds_emails: { 'k1@example.com': '2026-08-12T00:00:00Z' },
+  }), noExisting(), CONFIG, NOW);
+  check('customer_id gaat voor op e-mail', r.rows[0].ds_first_order_at === '2026-06-02T00:00:00Z', r.rows[0]);
 }
 {
   // Alleen een echte annulering haalt hem eruit, ook al telde hij al mee.

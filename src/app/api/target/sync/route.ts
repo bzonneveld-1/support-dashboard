@@ -11,6 +11,7 @@ const SubSchema = z.object({
   created_at: z.string(),
   customer_id: z.string().nullable().optional().default(null),
   customer_email: z.string().nullable().optional().default(null),
+  billed_count: z.number().int().nonnegative().optional(),
 });
 
 const ClaimSchema = z.object({
@@ -30,6 +31,7 @@ const UpsertSchema = z.object({
   subs_complete: z.boolean().optional(),
   subs: z.array(SubSchema).default([]),
   ds_customers: z.record(z.string()).default({}),
+  ds_emails: z.record(z.string()).optional(),
   claims: z.array(ClaimSchema).default([]),
   claim_lookups: z.record(z.object({
     found: z.boolean(),
