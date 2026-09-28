@@ -527,10 +527,11 @@ export default function Dashboard() {
                     <td className="px-4 py-2.5 tabular-nums">
                       <DailyCell day={day} value={dailyChat} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
                       {dailyChatConvs != null && (
-                        <div className="text-[0.4375rem] text-[#8E8E93] uppercase tracking-wider leading-tight mt-0.5 whitespace-nowrap">
+                        <div className="relative text-[0.4375rem] text-[#8E8E93] uppercase tracking-wider leading-none mt-0.5 whitespace-nowrap">
                           <div>{dailyChatConvs} chats</div>
+                          {/* Absolute so the second line sits in the cell padding and never grows the row */}
                           {dailyChatConvs > 0 && dailyHandoffs != null && (
-                            <div>{Math.round((dailyHandoffs / dailyChatConvs) * 100)}% handoff</div>
+                            <div className="absolute left-0 right-0 top-full mt-0.5">{Math.round((dailyHandoffs / dailyChatConvs) * 100)}% handoff</div>
                           )}
                         </div>
                       )}
