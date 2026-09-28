@@ -36,13 +36,7 @@ export async function middleware(request: NextRequest) {
       const hasTv = request.nextUrl.searchParams.get('tv') !== null;
       const target = request.nextUrl.origin + pathname + (hasTv ? '?tv=1' : '');
       const response = NextResponse.redirect(target);
-      response.cookies.set(AUTH_COOKIE_NAME, await createSessionToken(secret), {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: AUTH_COOKIE_MAX_AGE,
-        path: '/',
-      });
+      setSessionCookie(response, await createSessionToken(secret));
       return response;
     }
     // Invalid key — redirect to login
@@ -53,7 +47,13 @@ export async function middleware(request: NextRequest) {
   const cookieToken = request.cookies.get(AUTH_COOKIE_NAME)?.value;
   if (cookieToken) {
     const valid = await verifySessionToken(cookieToken, secret);
-    if (valid) return NextResponse.next();
+    if (valid) {
+      // Sliding expiry: every request (incl. the TV's 15s polls) renews the
+      // cookie, so an always-on screen never gets logged out
+      const response = NextResponse.next();
+      setSessionCookie(response, cookieToken);
+      return response;
+    }
   }
 
   // Not authenticated
@@ -62,6 +62,16 @@ export async function middleware(request: NextRequest) {
   }
 
   return redirectToLogin(request);
+}
+
+function setSessionCookie(response: NextResponse, token: string): void {
+  response.cookies.set(AUTH_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: AUTH_COOKIE_MAX_AGE,
+    path: '/',
+  });
 }
 
 function redirectToLogin(request: NextRequest): NextResponse {
