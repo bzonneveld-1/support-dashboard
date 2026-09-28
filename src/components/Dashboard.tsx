@@ -306,8 +306,11 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   // Header text sizes: bigger on desktop for readability, smaller on TV to reduce visual noise
-  // Webshop figures drop to 48px on TV so the centred Daily Totals layout fits €xxx.xxx
-  const webshopNumStyle = isTv ? { fontSize: '1em' } : undefined;
+  // Webshop figures drop to 48px on TV so the centred Daily Totals layout fits €xxx.xxx.
+  // The TV .text-xl rule is !important and must not change, so skip that class on TV.
+  const webshopNumClass = isTv
+    ? 'font-medium text-[var(--dash-text)] leading-none'
+    : 'text-xl font-medium text-[var(--dash-text)]';
   const hGroup = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';   // group labels: TV 24px, desktop 10px
   const hCol = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';     // column names: TV 24px, desktop 10px
 
@@ -549,7 +552,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : revMtd != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{formatCurrency(revMtd)}</span>
+                        <span className={webshopNumClass}>{formatCurrency(revMtd)}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -560,7 +563,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : revDaily != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{formatCurrency(revDaily)}</span>
+                        <span className={webshopNumClass}>{formatCurrency(revDaily)}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -571,7 +574,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : subsActive != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{subsActive}</span>
+                        <span className={webshopNumClass}>{subsActive}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -582,7 +585,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : subsNew != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{subsNew}</span>
+                        <span className={webshopNumClass}>{subsNew}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
