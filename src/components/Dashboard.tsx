@@ -306,6 +306,8 @@ export default function Dashboard() {
   const isCurrentWeek = weekParam === 'current' || (data && toWeekParam(data.week) === toWeekParam(getTodayStr()));
 
   // Header text sizes: bigger on desktop for readability, smaller on TV to reduce visual noise
+  // Webshop figures drop to 48px on TV so the centred Daily Totals layout fits €xxx.xxx
+  const webshopNumStyle = isTv ? { fontSize: '1em' } : undefined;
   const hGroup = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';   // group labels: TV 24px, desktop 10px
   const hCol = isTv ? 'text-[0.5rem]' : 'text-[0.625rem]';     // column names: TV 24px, desktop 10px
 
@@ -348,26 +350,27 @@ export default function Dashboard() {
         <div className="flex-1 min-h-0">
           <table className="w-full h-full border-collapse text-center" style={{ tableLayout: 'fixed' }}>
             <colgroup>
+              {/* Daily Totals sits centred: Day + Ticket Snapshots (36%) = Webshop (36%) */}
               {/* Day */}
               <col style={{ width: '9%' }} />
               {/* Ticket Snapshots: Unassigned 08, 18, All Open 08, 18 */}
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
               {/* Daily Totals: Answered, Missed, Chatbot, Email */}
-              <col style={{ width: '6.75%' }} />
-              <col style={{ width: '6.75%' }} />
-              <col style={{ width: '6.75%' }} />
-              <col style={{ width: '6.75%' }} />
-              {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New. Sized for the 60px TV digits (€xxx.xxx) */}
-              <col style={{ width: '15.5%' }} />
-              <col style={{ width: '11.5%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '5%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              <col style={{ width: '7%' }} />
+              {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New */}
+              <col style={{ width: '13%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '7.5%' }} />
+              <col style={{ width: '5.5%' }} />
             </colgroup>
             <thead className="sticky top-0 z-10">
-              {/* Row 1: Group labels — 1 + 4 + 5 + 4 = 14 columns */}
+              {/* Row 1: Group labels — 1 + 4 + 4 + 4 = 13 columns */}
               <tr className="bg-[#1D1D1F]">
                 <th rowSpan={3} className={`px-5 py-2 text-left ${hGroup} font-medium text-white uppercase tracking-wider border-r border-[#343436]`}>
                   Day
@@ -546,7 +549,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : revMtd != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]">{formatCurrency(revMtd)}</span>
+                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{formatCurrency(revMtd)}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -557,7 +560,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : revDaily != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]">{formatCurrency(revDaily)}</span>
+                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{formatCurrency(revDaily)}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -568,7 +571,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : subsActive != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]">{subsActive}</span>
+                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{subsActive}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
@@ -579,7 +582,7 @@ export default function Dashboard() {
                       {day.isFuture ? (
                         <span className="text-[var(--dash-muted)]">—</span>
                       ) : subsNew != null ? (
-                        <span className="text-xl font-medium text-[var(--dash-text)]">{subsNew}</span>
+                        <span className="text-xl font-medium text-[var(--dash-text)]" style={webshopNumStyle}>{subsNew}</span>
                       ) : (
                         <span className="text-[var(--dash-muted)]">—</span>
                       )}
