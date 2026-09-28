@@ -20,6 +20,7 @@ interface MetricsRow {
   calls_answered: number | null;
   calls_missed: number | null;
   total_chatbot_chats: number | null;
+  chatbot_handoffs?: number | null;
   total_emails: number | null;
   total_wa_messages: number | null;
   revenue_mtd: number | null;
@@ -429,6 +430,7 @@ export default function Dashboard() {
                 const dailyAnswered = getDailyValue(day, 'calls_answered');
                 const dailyMissed = getDailyValue(day, 'calls_missed');
                 const dailyChat = getDailyValue(day, 'total_chatbot_chats');
+                const dailyHandoffs = getDailyValue(day, 'chatbot_handoffs');
                 const dailyEmails = getDailyValue(day, 'total_emails');
                 const dailyWaMsgs = getDailyValue(day, 'total_wa_messages');
                 const revMtd = getWebshopValue(day, 'revenue_mtd');
@@ -525,6 +527,11 @@ export default function Dashboard() {
                     {/* Chatbot Chats */}
                     <td className="px-4 py-2.5 tabular-nums">
                       <DailyCell day={day} value={dailyChat} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
+                      {dailyChat != null && dailyChat > 0 && dailyHandoffs != null && (
+                        <div className="text-[0.4375rem] text-[#8E8E93] uppercase tracking-wider leading-none mt-0.5">
+                          {Math.round((dailyHandoffs / dailyChat) * 100)}% handoff
+                        </div>
+                      )}
                     </td>
 
                     {/* Emails Sent */}
