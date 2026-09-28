@@ -349,17 +349,17 @@ export default function Dashboard() {
           <table className="w-full h-full border-collapse text-center" style={{ tableLayout: 'fixed' }}>
             <colgroup>
               {/* Day */}
-              <col style={{ width: '8%' }} />
+              <col style={{ width: '9%' }} />
               {/* Ticket Snapshots: Unassigned 08, 18, All Open 08, 18 */}
               <col style={{ width: '6%' }} />
               <col style={{ width: '6%' }} />
               <col style={{ width: '6%' }} />
               <col style={{ width: '6%' }} />
               {/* Daily Totals: Answered, Missed, Chatbot, Email */}
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '7%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
+              <col style={{ width: '6.75%' }} />
               {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New. Sized for the 60px TV digits (€xxx.xxx) */}
               <col style={{ width: '15.5%' }} />
               <col style={{ width: '11.5%' }} />
