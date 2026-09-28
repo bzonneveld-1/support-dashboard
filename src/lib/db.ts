@@ -19,6 +19,7 @@ export interface MetricsRow {
   calls_missed: number | null;
   total_chatbot_chats: number | null;
   chatbot_handoffs?: number | null;
+  chatbot_conversations?: number | null;
   total_emails: number | null;
   total_wa_messages: number | null;
   revenue_mtd: number | null;
