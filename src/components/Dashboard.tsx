@@ -351,21 +351,20 @@ export default function Dashboard() {
               {/* Day */}
               <col style={{ width: '9%' }} />
               {/* Ticket Snapshots: Unassigned 08, 18, All Open 08, 18 */}
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
-              <col style={{ width: '6%' }} />
-              {/* Daily Totals: Answered, Missed, Chatbot, Email, WA */}
               <col style={{ width: '6.5%' }} />
               <col style={{ width: '6.5%' }} />
               <col style={{ width: '6.5%' }} />
               <col style={{ width: '6.5%' }} />
-              <col style={{ width: '6.5%' }} />
-              {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New */}
-              <col style={{ width: '8.25%' }} />
-              <col style={{ width: '8.25%' }} />
-              <col style={{ width: '8.25%' }} />
-              <col style={{ width: '8.25%' }} />
+              {/* Daily Totals: Answered, Missed, Chatbot, Email */}
+              <col style={{ width: '7.5%' }} />
+              <col style={{ width: '7.5%' }} />
+              <col style={{ width: '7.5%' }} />
+              <col style={{ width: '7.5%' }} />
+              {/* Webshop: Rev MTD, Rev Daily, Subs Total, Subs New (MTD needs room for €xxx.xxx on TV) */}
+              <col style={{ width: '11%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '8%' }} />
+              <col style={{ width: '7%' }} />
             </colgroup>
             <thead className="sticky top-0 z-10">
               {/* Row 1: Group labels — 1 + 4 + 5 + 4 = 14 columns */}
