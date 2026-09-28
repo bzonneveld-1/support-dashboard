@@ -240,7 +240,6 @@ export default function Dashboard() {
   const totalMissed = days.reduce((sum, d) => sum + (getDailyValue(d, 'calls_missed') ?? 0), 0);
   const totalChat = days.reduce((sum, d) => sum + (getDailyValue(d, 'total_chatbot_chats') ?? 0), 0);
   const totalEmails = days.reduce((sum, d) => sum + (getDailyValue(d, 'total_emails') ?? 0), 0);
-  const totalWaMsgs = days.reduce((sum, d) => sum + (getDailyValue(d, 'total_wa_messages') ?? 0), 0);
 
   // Footer: Ticket Snapshot averages (always from morning/evening)
   const avgUnassigned08 = avgOf(days.map(d => d.morning?.unassigned_tickets).filter((v): v is number => v != null));
@@ -377,7 +376,7 @@ export default function Dashboard() {
                 <th colSpan={4} className={`px-4 pt-2.5 pb-0.5 ${hGroup} font-semibold text-white uppercase tracking-[0.12em]`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Ticket Snapshots
                 </th>
-                <th colSpan={5} className={`px-4 pt-2.5 pb-0.5 ${hGroup} font-semibold text-white uppercase tracking-[0.12em]`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
+                <th colSpan={4} className={`px-4 pt-2.5 pb-0.5 ${hGroup} font-semibold text-white uppercase tracking-[0.12em]`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
                   Daily Totals
                 </th>
                 <th colSpan={4} className={`px-4 pt-2.5 pb-0.5 ${hGroup} font-semibold text-white uppercase tracking-[0.12em]`}>
@@ -401,8 +400,7 @@ export default function Dashboard() {
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Answered Calls</th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Missed Calls<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>office hours</span></th>
                 <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Chatbot Sent</th>
-                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Emails Sent</th>
-                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>WhatsApps Sent</th>
+                <th rowSpan={2} className={`px-4 py-1 ${hCol} font-medium text-white uppercase tracking-wider`} style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>Emails Sent</th>
                 {/* Webshop — rowSpan=2 */}
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Month Rev.<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>Ex VAT</span></th>
                 <th rowSpan={2} className={`px-3 py-1 ${hCol} font-medium text-white uppercase tracking-wider`}>Rev Daily<br/><span className="font-normal normal-case tracking-normal text-white/50" style={{ fontSize: '0.7em' }}>Ex VAT</span></th>
@@ -434,7 +432,6 @@ export default function Dashboard() {
                 const dailyHandoffs = getDailyValue(day, 'chatbot_handoffs');
                 const dailyChatConvs = getDailyValue(day, 'chatbot_conversations');
                 const dailyEmails = getDailyValue(day, 'total_emails');
-                const dailyWaMsgs = getDailyValue(day, 'total_wa_messages');
                 const revMtd = getWebshopValue(day, 'revenue_mtd');
                 const revDaily = getWebshopValue(day, 'revenue_daily');
                 const subsActive = getWebshopValue(day, 'subscriptions_active');
@@ -537,14 +534,9 @@ export default function Dashboard() {
                       )}
                     </td>
 
-                    {/* Emails Sent */}
-                    <td className="px-4 py-2.5 tabular-nums">
-                      <DailyCell day={day} value={dailyEmails} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
-                    </td>
-
-                    {/* WhatsApps Sent — split line right */}
+                    {/* Emails Sent — split line right */}
                     <td className="px-4 py-2.5 tabular-nums" style={{ borderRight: 'var(--dash-split-w) solid var(--dash-split)' }}>
-                      <DailyCell day={day} value={dailyWaMsgs} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
+                      <DailyCell day={day} value={dailyEmails} backfilling={backfilling === `${day.date}-18:00`} onBackfill={() => handleBackfill(day.date, '18:00')} />
                     </td>
 
                     {/* Webshop: Rev MTD */}
@@ -613,8 +605,7 @@ export default function Dashboard() {
                 <FooterCell value={totalAnswered} label="total" />
                 <FooterCell value={totalMissed} label="total" />
                 <FooterCell value={totalChat} label="total" />
-                <FooterCell value={totalEmails} label="total" />
-                <FooterCell value={totalWaMsgs} label="total" splitRight />
+                <FooterCell value={totalEmails} label="total" splitRight />
 
                 {/* Webshop: growth / averages */}
                 <FooterCell value={revMtdGrowthStr} label="growth" />

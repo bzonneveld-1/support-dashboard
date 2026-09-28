@@ -30,7 +30,7 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
   const legendSize = isTv ? 16 : 12;
 
   const data = useMemo(() => {
-    const byDate = new Map<string, { Calls: number; Chatbot: number; Emails: number; 'WA Msgs': number }>();
+    const byDate = new Map<string, { Calls: number; Chatbot: number; Emails: number }>();
     for (const m of metrics) {
       if (m.time_slot !== 'latest' && m.time_slot !== '18:00') continue;
       const date = m.metric_date.split('T')[0];
@@ -40,7 +40,6 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
           Calls: m.calls_answered ?? 0,
           Chatbot: m.total_chatbot_chats ?? 0,
           Emails: m.total_emails ?? 0,
-          'WA Msgs': m.total_wa_messages ?? 0,
         });
       }
     }
@@ -50,7 +49,7 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
   }, [metrics]);
 
   const yMax = useMemo(() => {
-    const maxTotal = Math.max(...data.map(d => d.Calls + d.Chatbot + d.Emails + d['WA Msgs']), 0);
+    const maxTotal = Math.max(...data.map(d => d.Calls + d.Chatbot + d.Emails), 0);
     return Math.ceil(maxTotal * 1.15);
   }, [data]);
 
@@ -85,8 +84,7 @@ export default function DailyVolumeChart({ metrics }: { metrics: MetricsRow[] })
         <Legend wrapperStyle={{ fontSize: legendSize }} />
         <Bar dataKey="Calls" stackId="a" fill="#007AFF" />
         <Bar dataKey="Chatbot" stackId="a" fill="#8E8E93" />
-        <Bar dataKey="Emails" stackId="a" fill="#FF6620" />
-        <Bar dataKey="WA Msgs" stackId="a" fill="#34C759" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="Emails" stackId="a" fill="#FF6620" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
